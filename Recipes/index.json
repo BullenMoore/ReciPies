@@ -1,0 +1,36 @@
+[
+  {
+    "Id": "1",
+    "Title": "Spaghetti Carbonara",
+    "Description": "A classic Italian pasta dish made with eggs, cheese, pancetta, and pepper.",
+    "ImagePath": "images/spaghetti_carbonara.jpg",
+    "Tags": [
+      "Dinner",
+      "Italian"
+    ]
+  },
+  {
+    "Id": "2",
+    "Title": "Avocado Toast with Poached Egg",
+    "Description": "A quick and healthy breakfast option featuring creamy avocado and a soft poached egg.",
+    "ImagePath": "img/avocado_toast.jpg",
+    "Tags": [
+      "Dinner",
+      "Fruit"
+    ]
+  },
+  {
+    "Id": "3",
+    "Title": "Chocolate Chip Cookies",
+    "Description": "Crispy on the edges, chewy in the middle \u2014 classic chocolate chip cookies.",
+    "ImagePath": "images/chocolate_chip_cookies.jpg",
+    "Tags": []
+  },
+  {
+    "Id": "76921829",
+    "Title": "",
+    "Description": "",
+    "ImagePath": "",
+    "Tags": []
+  }
+]

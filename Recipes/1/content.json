@@ -1,0 +1,23 @@
+{
+  "Id": "1",
+  "Title": "Spaghetti Carbonara",
+  "Description": "A classic Italian pasta dish made with eggs, cheese, pancetta, and pepper.",
+  "ImagePath": "images/spaghetti_carbonara.jpg",
+  "Portions": 4,
+  "Time": 25,
+  "Source": "Grandma's Cookbook",
+  "SourceURL": "https://example.com/spaghetti-carbonara",
+  "Ingredients": [
+    { "Name": "Spaghetti", "Amount": 200, "Unit": "g" },
+    { "Name": "Pancetta", "Amount": 100, "Unit": "g" },
+    { "Name": "Eggs", "Amount": 2, "Unit": "large" },
+    { "Name": "Parmesan chees, grated", "Amount": 50, "Unit": "g" },
+    { "Name": "Salt and black pepper", "Amount": 0, "Unit": "" }
+  ],
+  "Instructions": "1. Boil pasta.\n2. Fry pancetta.\n3. Mix eggs and cheese.\n4. Combine all ingredients and serve.",
+  "Nutrition": "Calories: 520 kcal per serving",
+  "Tags": [
+    "Dinner",
+    "Italian"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "Id": "3",
+  "Title": "Chocolate Chip Cookies",
+  "Description": "Crispy on the edges, chewy in the middle — classic chocolate chip cookies.",
+  "ImagePath": "images/chocolate_chip_cookies.jpg",
+  "Portions": 24,
+  "Time": 35,
+  "Source": "Cookie Heaven",
+  "SourceURL": "https://example.com/chocolate-chip-cookies",
+  "Ingredients": [
+    { "Name": "All-purpose flour", "Amount": 2.25, "Unit": "cups" },
+    { "Name": "Baking soda", "Amount": 1, "Unit": "tsp" },
+    { "Name": "Butter", "Amount": 1, "Unit": "cup" },
+    { "Name": "Sugar", "Amount": 0.75, "Unit": "cup" },
+    { "Name": "Brown sugar", "Amount": 0.75, "Unit": "cup" },
+    { "Name": "Eggs", "Amount": 2, "Unit": "st" },
+    { "Name": "Chocolate chips", "Amount": 2, "Unit": "cups" }
+  ],
+  "Instructions": "1. Preheat oven to 180°C.\n2. Mix wet and dry ingredients.\n3. Stir in chocolate chips.\n4. Scoop onto baking sheet and bake 10–12 min.",
+  "Nutrition": "Calories: 150 kcal per cookie"
+}

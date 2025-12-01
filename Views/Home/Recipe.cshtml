@@ -1,0 +1,78 @@
+@model ReciPies.Models.RecipeContent
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="recipe-container">
+
+    <!-- TOP SECTION -->
+    <div class="recipe-top">
+        <div class="recipe-image">
+            <img src="/Recipes/@Model.Id/@Model.ImagePath" alt="@Model.Title" />
+        </div>
+
+        <div class="recipe-info">
+            <h1>@Model.Title</h1>
+
+            <div class="recipe-tags">
+                @foreach (var tag in Model.Tags)
+                {
+                    <span class="tag">@tag</span>
+                }
+            </div>
+
+            <div class="recipe-meta">
+                <span>⏱️ @Model.Time min</span>
+                <span>🍽️ @Model.Portions portions</span>
+            </div>
+
+            <p class="recipe-description">@Model.Description</p>
+
+            @if (!string.IsNullOrEmpty(Model.SourceURL))
+            {
+                <p class="recipe-source">
+                    Source: <a href="@Model.SourceURL" target="_blank">@Model.Source</a>
+                </p>
+            }
+        </div>
+    </div>
+
+
+    <!-- BOTTOM SECTION -->
+    <div class="recipe-bottom">
+
+        <!-- INGREDIENTS -->
+        <div class="ingredients">
+            <h2>Ingredients</h2>
+
+            <ul>
+                @foreach (var ingredient in Model.Ingredients)
+                {
+                    <li>
+                        @if (ingredient.Amount != 0)
+                        {
+                            @($"{ingredient.Amount} ")
+                        }
+                        @($"{ingredient.Unit} {ingredient.Name}")
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <!-- INSTRUCTIONS -->
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p>@Model.Instructions</p>
+        </div>
+    </div>
+
+    <!-- NUTRITION -->
+    @if (!string.IsNullOrWhiteSpace(Model.Nutrition))
+    {
+        <div class="nutrition">
+            <h2>Nutrition</h2>
+            <p>@Model.Nutrition</p>
+        </div>
+    }
+</div>
