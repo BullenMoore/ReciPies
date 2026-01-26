@@ -28,49 +28,18 @@ This is basically a database that stores recipe tables and uses a web interface 
 
 ## Known issues
 
-- No way of deleting ingredients from a recipe
 - Adding new tags to a recipe doesn't do anything
 
 ## How to set up
 
 TBA
 
-[
-### Windows
-For Windows it is easiest to use the executable provided in the releases. It will launch and act as a background service, and can be seen in the tray menu.
 
-Alternatively you can build the project yourself (just follow the Linux steps below).
-
-### Linux
-
-1. Install the dotnet sdk. (net9.0)
-
-``` shell
-apt-get install "something"
-```
-2. Build the project
-
-``` shell
-dotnet build projectname
-```
-3. Launch the program
-``` shell
-launch launch launch
-```
-
-### Docker
-TBA
-comment]:#
 
 ## Examples
 
 TBA
 
-[
-(Some images showing of the main index page, recipe page, edit page etc.)
-
-You can also check how the program works live at my own hosting of the manager on my own website (<- Hyperlink TBA).
-comment]:#
 ## License, usage and attribution
 
 This program is licensed under the MIT License (see [`LICENSE.md`](LICENSE.md)). You are free to use, modify, distribute, and commercialize it under the terms of that license.
