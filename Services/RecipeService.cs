@@ -1,173 +1,129 @@
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using ReciPies.App_Data;
 using ReciPies.Models;
 
 namespace ReciPies.Services
 {
-    //TODO: Everytime there is a read/write, use the lock
     public class RecipeService
     {
-        private readonly string _recipesPath;
-        private readonly string _indexFile;
-        private readonly string _tagsFile;
-
-        private static readonly ReaderWriterLockSlim _lock = new();
+        private static readonly Random _random = new();
+        private readonly RecipeDbContext _db;
         
-        public RecipeService(IHostEnvironment env)
+        // Save Recipe numbers here to save time?
+        private List<string> existingRecipeIds;
+        
+        public RecipeService(IHostEnvironment env, RecipeDbContext db)
         {
-            _recipesPath = Path.Combine(env.ContentRootPath, "Recipes");
-            _indexFile = Path.Combine(_recipesPath, "index.json");
-            _tagsFile  = Path.Combine(_recipesPath, "tags.json");
+            _db = db;
+            existingRecipeIds = GetRecipeIds();
         }
-
-        // Called on startup to generate recipes.json
-        public void GenerateRecipeIndex()
+        
+        private string GenerateRecipeNumber()
         {
-            List<Recipe> recipes = new List<Recipe>();
+            string id;
+
+            do
+            {
+                id = _random.Next(10000000, 99999999).ToString();
+            }
+            while (existingRecipeIds.Contains(id));
             
-            // For each dir in _recipesPath, do a new entry in _indexFile
-            foreach (var dir in Directory.GetDirectories(_recipesPath))
-            {
-                var jsonPath = Path.Combine(dir, "content.json");
-
-                try
-                {
-                    var content = JsonSerializer.Deserialize<RecipeContent>(File.ReadAllText(jsonPath));
-                    if (content != null)
-                    {
-                        recipes.Add(new Recipe
-                        {
-                            Id = new DirectoryInfo(dir).Name,
-                            Title = content.Title,
-                            Description = content.Description,
-                            ImagePath = content.ImagePath,
-                            Tags = content.Tags
-                            
-                        });
-                    }
-                }
-                catch
-                {
-                    // Log errors
-                }
-            }
-            File.WriteAllText(_indexFile, JsonSerializer.Serialize(recipes, new JsonSerializerOptions { WriteIndented = true }));
+            existingRecipeIds.Add(id);
+            return id;
         }
-        public void GenerateTagFile()
-        {
-            var tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            try
-            { 
-                var recipes = JsonSerializer.Deserialize<List<Recipe>>(File.ReadAllText(_indexFile));
-                if (recipes != null)
-                {
-                    foreach (var recipe in recipes){
-                        if (recipe.Tags != null)
-                        {
-                            foreach (var tag in recipe.Tags)
-                            {
-                                if (!string.IsNullOrEmpty(tag))
-                                {
-                                    tags.Add(tag.Trim());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // Log errors
-            }
-            // Ensures the file won't be written to while others read/write
-            _lock.EnterWriteLock();
-            try
-            {
-                File.WriteAllText(_tagsFile,
-                    JsonSerializer.Serialize(tags.OrderBy(t => t).ToList(),
-                        new JsonSerializerOptions { WriteIndented = true }));
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
-        }
-        public List<Recipe> LoadIndex()
+        private List<string> GetRecipeIds()
         {
-            // TODO: What if file doesn't exist?
+            return _db.Recipes
+                .Select(r => r.Id)
+                .ToList();
+        }
+
+        public List<DTOs.RecipeCardDto> GetFrontPageRecipes()
+        {
+            return _db.Recipes
+                .AsNoTracking()
+                .Select(r => new DTOs.RecipeCardDto
+                {
+                    Id = r.Id,
+                    Title = r.Title,
+                    Description = r.Description,
+                    ImagePath = r.Images
+                        .Where(i => i.IsMain)
+                        .Select(i => i.Path)
+                        .FirstOrDefault()
+                })
+                .OrderBy(r => r.Title)
+                .ToList();
+        }
+        public List<Tag> GetTags()
+        {
+            return _db.Tags
+                .AsNoTracking()
+                .OrderBy(t => t.Name)
+                .ToList();
+        }
+        public Recipe? GetById(string id)
+        {
+            return _db.Recipes
+                .Include(r => r.Images)
+                .Include(r => r.Ingredients)
+                .Include(r => r.RecipeTags)
+                .ThenInclude(rt => rt.Tag)
+                .FirstOrDefault(r => r.Id == id);
+        }
+        public string Create()
+        {
+            // Generate an ID
+            string id = GenerateRecipeNumber();
             
-            string json;
-            _lock.EnterReadLock();
-            try
-            {
-                json = File.ReadAllText(_indexFile);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-            return JsonSerializer.Deserialize<List<Recipe>>(json) ?? new List<Recipe>();
-        }
-        public List<string> LoadTags()
-        {
-            // TODO: What if file doesn't exist?
-
-            string json;
-            _lock.EnterReadLock();
-            try
-            {
-                json = File.ReadAllText(_tagsFile);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
-        }
-        public RecipeContent? LoadRecipeById(string id)
-        {
-            var path = Path.Combine(_recipesPath, id, "content.json");
-            if (!File.Exists(path)) return null; 
+            // Create an empty recipe with that ID
+            Recipe recipe = new Recipe();
+            recipe.Id = id;
+            _db.Recipes.Add(recipe);
+            _db.SaveChanges();
             
-            string json;
-            _lock.EnterReadLock();
-            try
-            {
-                json = File.ReadAllText(path);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-            return JsonSerializer.Deserialize<RecipeContent>(json) ?? new RecipeContent();
+            return id;
         }
-        public void NewRecipe(Recipe recipe)
+        public void Update(Recipe updatedRecipe)
         {
-            // Create recipe dir
-            var dir = Path.Combine(_recipesPath, recipe.Id);
-            Directory.CreateDirectory(dir);
+            
+            var existingRecipe = _db.Recipes
+                .Include(r => r.Ingredients)
+                .Include(r => r.Images)
+                .Include(r => r.RecipeTags)
+                .First(r => r.Id == updatedRecipe.Id);
+            
+            // Update scalar properties
+            existingRecipe.Title = updatedRecipe.Title;
+            existingRecipe.Description = updatedRecipe.Description;
+            existingRecipe.TimeMinutes = updatedRecipe.TimeMinutes;
+            existingRecipe.Portions = updatedRecipe.Portions;
+            existingRecipe.Source = updatedRecipe.Source;
+            existingRecipe.SourceUrl = updatedRecipe.SourceUrl;
+            existingRecipe.Nutrition = updatedRecipe.Nutrition;
+            
+            // Clears existing ingredients to avoid duplicates and add them back again
+            existingRecipe.Ingredients.Clear();
 
-            // Create img dir
-            var img = Path.Combine(dir, "img");
-            Directory.CreateDirectory(img);
-
-            // content.json is created in SaveRecipe function automatically
-            SaveRecipe(recipe);
+            foreach (var ingredient in updatedRecipe.Ingredients)
+            {
+                existingRecipe.Ingredients.Add(new Ingredient
+                {
+                    Name = ingredient.Name,
+                    Amount = ingredient.Amount,
+                    Unit = ingredient.Unit
+                });
+            }
+            _db.SaveChanges();
         }
-
-        public void SaveRecipe(Recipe recipe)
+        public void Delete(string id)
         {
-            // Create content.json
-            var dir = Path.Combine(_recipesPath, recipe.Id);
-            var json = JsonSerializer.Serialize(recipe, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(Path.Combine(dir, "content.json"), json);
+            var recipe = _db.Recipes.Find(id);
+            if (recipe == null) return;
 
-            GenerateRecipeIndex(); // update index file
-            GenerateTagFile();     // update tag file
+            _db.Recipes.Remove(recipe);
+            _db.SaveChanges();
         }
     }
 }

@@ -8,6 +8,26 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Recipes\84939022\content.json" />
+      <_ContentIncludedByDefault Remove="Recipes\1\content.json" />
+      <_ContentIncludedByDefault Remove="Recipes\21231978\content.json" />
+      <_ContentIncludedByDefault Remove="Recipes\2\content.json" />
+      <_ContentIncludedByDefault Remove="Recipes\3\content.json" />
+      <_ContentIncludedByDefault Remove="Recipes\76921829\content.json" />
+      <_ContentIncludedByDefault Remove="Recipes\index.json" />
+      <_ContentIncludedByDefault Remove="Recipes\tags.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.12" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.12">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Backup\" />
     </ItemGroup>
 
 </Project>

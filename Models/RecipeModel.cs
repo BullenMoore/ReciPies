@@ -4,26 +4,55 @@ namespace ReciPies.Models
 {
     public class Recipe
     {
-        public string Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string ImagePath { get; set; } = string.Empty;
-        public List<string> Tags { get; set; } = new();
+        public string Id { get; set; } = default!;
+        public string? Title { get; set; } = "";
+        public string? Description { get; set; } = "";
+
+        public int? Portions { get; set; }
+        public int? TimeMinutes { get; set; }
+
+        public string? Instructions { get; set; } = "";
+        public string? Nutrition { get; set; } = "";
+
+        public string? Source { get; set; } = "";
+        public string? SourceUrl { get; set; } = "";
+
+        public List<Ingredient>? Ingredients { get; set; } = new();
+        public List<RecipeImage>? Images { get; set; } = new();
+        public List<RecipeTag>? RecipeTags { get; set; } = new();
     }
     public class Ingredient
     {
-        public string Name { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public string RecipeId { get; set; } = default!;
+        public string Name { get; set; } = "";
         public double Amount { get; set; }
-        public string Unit { get; set; } = string.Empty;
+        public string Unit { get; set; } = "";
+
+        public Recipe Recipe { get; set; } = default!;
     }
-    public class RecipeContent : Recipe
+    public class RecipeImage
     {
-        public int Portions { get; set; }
-        public int Time { get; set; }
-        public string Source {  get; set; } = string.Empty;
-        public string SourceURL { get; set; } = string.Empty;
-        public List<Ingredient> Ingredients { get; set; } = new();
-        public string Instructions { get; set; } = string.Empty;
-        public string Nutrition { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public string RecipeId { get; set; } = default!;
+        public string Path { get; set; } = "";
+        public bool IsMain { get; set; }
+
+        public Recipe Recipe { get; set; } = default!;
+    }
+    public class Tag
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+
+        public ICollection<RecipeTag> RecipeTags { get; set; } = new List<RecipeTag>();
+    }
+    public class RecipeTag
+    {
+        public string RecipeId { get; set; } = default!;
+        public int TagId { get; set; }
+
+        public Recipe Recipe { get; set; } = default!;
+        public Tag Tag { get; set; } = default!;
     }
 }

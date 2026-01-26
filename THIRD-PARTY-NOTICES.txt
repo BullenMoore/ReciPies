@@ -1,0 +1,22 @@
+This program includes third-party software components.
+Each component is licensed under its respective license.
+
+---
+
+Microsoft .NET Runtime and Libraries
+Copyright (c) .NET Foundation and Contributors
+Licensed under the MIT License
+https://github.com/dotnet/runtime
+
+---
+
+Entity Framework Core
+Copyright (c) .NET Foundation and Contributors
+Licensed under the MIT License
+https://github.com/dotnet/efcore
+
+---
+
+SQLite
+Public Domain
+https://www.sqlite.org

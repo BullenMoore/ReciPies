@@ -7,10 +7,48 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <style>
+        :root {
+            --topDivHeight: 150px;
+        }
+        .topOverlayDiv{
+            width: 100%;
+            background-color: greenyellow;
+            top: 0;
+            position: fixed;
+            height: var(--topDivHeight);
+        }
+        .topDiv{
+            width: 100%;
+            background-color: greenyellow;
+            top: 0;
+            height: var(--topDivHeight);
+        }
+        .bottomDiv{
+            width: 100%;
+            background-color: greenyellow;
+            bottom: 0;
+            /* Maybe static */
+        }
+        /* Put this in the site.css file later*/
+    </style>
 </head>
 <body>
 
+<!-- Render a top div -->
+<div class="topDiv"></div>
+<div class="topOverlayDiv">
+    <h1><a href="/">Your logo or text here</a></h1>
+</div>
+
 @RenderBody()
+
+@RenderSection("Scripts", required: false)
+
+<!-- Render a bot div -->
+<div class="bottomDiv">
+    <h6>Made with <a href="https://github.com/BullenMoore/ReciPies">ReciPies v0.2</a></h6>
+</div>
 
 </body>
 </html>

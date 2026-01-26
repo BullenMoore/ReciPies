@@ -1,44 +1,25 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using ReciPies.App_Data;
 using ReciPies.Services;
-using ReciPies.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<RecipeService>();
+builder.Services.AddDbContext<RecipeDbContext>(options =>
+{
+    options.UseSqlite("Data Source=App_Data/recipes.db");
+});
 
-// Activate the system functions
-builder.Services.AddSingleton<SystemFunctions>();
+builder.Services.AddScoped<RecipeService>();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
 
-
-// TODO: Call for some system functions here
-
-using (var scope1 = app.Services.CreateScope())
-{
-    var systemFunctions = scope1.ServiceProvider.GetRequiredService<SystemFunctions>();
-    systemFunctions.CleanupFiles();
-}
-
-// Generate the index when the app starts
-using (var scope2 = app.Services.CreateScope())
-{
-    var recipeService = scope2.ServiceProvider.GetRequiredService<RecipeService>();
-    recipeService.GenerateRecipeIndex();
-    recipeService.GenerateTagFile();
-}
-
-// Expose the /Recipes folder
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(app.Environment.ContentRootPath, "Recipes")),
-    RequestPath = "/Recipes"
-});
+// TODO: Create a backup function that runs everytime the service is started and saves to Backup folder
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -61,3 +42,5 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.Run();
+
+// Fun fact: The name ReciPies doesn't come from my comedian of a brain, but rather from that I can't spell "Recipes"

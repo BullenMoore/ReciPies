@@ -1,9 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using ReciPies.App_Data;
 using ReciPies.Models;
-using ReciPies.Models.ViewModels;
 using ReciPies.Services;
-using ReciPies.Utilities;
 
 namespace ReciPies.Controllers;
 
@@ -11,34 +10,28 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly RecipeService _recipes;
-    private readonly SystemFunctions _systemFunctions;
 
-    public HomeController(ILogger<HomeController> logger, RecipeService recipes,  SystemFunctions systemFunctions)
+    public HomeController(ILogger<HomeController> logger, RecipeService recipes)
     {
         _logger = logger;
         _recipes = recipes;
-        _systemFunctions = systemFunctions;
     }
 
     public IActionResult Index()
     {
-        // Loads the index.json file
-        var allRecipes = _recipes.LoadIndex();
-        var allTags = _recipes.LoadTags();
-
-        var viewModel = new IndexViewModel
+        var vm = new DTOs.HomeViewmodel
         {
-            Recipes = allRecipes,
-            Tags = allTags
+            RecipeCards = _recipes.GetFrontPageRecipes(),
+            Tags = _recipes.GetTags()
         };
-        return View(viewModel);
+        return View(vm);
     }
     
     [Route("recipe/{id}")]
     public IActionResult Recipe(string id)
     {
-        // Load a recipe by ID
-        var recipe = _recipes.LoadRecipeById(id);
+        // Load a recipe by ID into view mode
+        var recipe = _recipes.GetById(id);
         return View(recipe);
     }
 
@@ -46,24 +39,34 @@ public class HomeController : Controller
     public IActionResult Edit(string id)
     {
         // Load recipe by ID into edit mode
-        var recipe = _recipes.LoadRecipeById(id);
-        return View(recipe);
+        
+        var vm = new DTOs.EditRecipeDto
+        {
+            Recipe = _recipes.GetById(id),
+            Tags = _recipes.GetTags()
+        };
+        return View(vm);
     }
 
     public IActionResult New()
     {
-        string id = _systemFunctions.GenerateRandomRecipeNumber();
-        
-        Recipe recipe = new Recipe { Id = id };
-        _recipes.NewRecipe(recipe);
+        string id = _recipes.Create();
         
         return RedirectToAction("Edit", "Home", new { id = id });
     }
 
-    public IActionResult Save(RecipeContent recipe)
+    public IActionResult Save(Recipe recipe)
     {
-        _recipes.SaveRecipe(recipe);
+        _recipes.Update(recipe);
+        
         return RedirectToAction("Recipe", "Home", new { id = recipe.Id });
+    }
+
+    public IActionResult Delete(string id)
+    {
+        _recipes.Delete(id);
+        
+        return RedirectToAction("Index", "Home");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
