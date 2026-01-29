@@ -19,6 +19,7 @@ public class DTOs
     public class EditRecipeDto
     {
         public Recipe Recipe { get; set; } = new();
-        public List<Tag> Tags { get; set; } = new();
+        public List<Tag> AllTags { get; set; } = new();
+        public List<string> SelectedTagNames { get; set; } = new();
     }
 }

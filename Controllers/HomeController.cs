@@ -43,7 +43,7 @@ public class HomeController : Controller
         var vm = new DTOs.EditRecipeDto
         {
             Recipe = _recipes.GetById(id),
-            Tags = _recipes.GetTags()
+            AllTags = _recipes.GetTags()
         };
         return View(vm);
     }
@@ -55,11 +55,11 @@ public class HomeController : Controller
         return RedirectToAction("Edit", "Home", new { id = id });
     }
 
-    public IActionResult Save(Recipe recipe)
+    public IActionResult Save(DTOs.EditRecipeDto model)
     {
-        _recipes.Update(recipe);
+        _recipes.Update(model.Recipe, model.SelectedTagNames);
         
-        return RedirectToAction("Recipe", "Home", new { id = recipe.Id });
+        return RedirectToAction("Recipe", "Home", new { id = model.Recipe.Id });
     }
 
     public IActionResult Delete(string id)

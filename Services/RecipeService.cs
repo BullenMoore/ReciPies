@@ -32,6 +32,18 @@ namespace ReciPies.Services
             return id;
         }
 
+        private void RemoveUnusedTags()
+        {
+            List<Tag> unusedTags = _db.Tags
+                .Where(t => !t.RecipeTags.Any())
+                .ToList();
+
+            if (unusedTags.Count == 0) return;
+
+            _db.Tags.RemoveRange(unusedTags);
+            // Remember to save to db after calling this function
+        }
+
         private List<string> GetRecipeIds()
         {
             return _db.Recipes
@@ -85,9 +97,8 @@ namespace ReciPies.Services
             
             return id;
         }
-        public void Update(Recipe updatedRecipe)
+        public void Update(Recipe updatedRecipe, List<string> selectedTagNames)
         {
-            
             var existingRecipe = _db.Recipes
                 .Include(r => r.Ingredients)
                 .Include(r => r.Images)
@@ -101,6 +112,7 @@ namespace ReciPies.Services
             existingRecipe.Portions = updatedRecipe.Portions;
             existingRecipe.Source = updatedRecipe.Source;
             existingRecipe.SourceUrl = updatedRecipe.SourceUrl;
+            existingRecipe.Instructions = updatedRecipe.Instructions;
             existingRecipe.Nutrition = updatedRecipe.Nutrition;
             
             // Clears existing ingredients to avoid duplicates and add them back again
@@ -115,6 +127,28 @@ namespace ReciPies.Services
                     Unit = ingredient.Unit
                 });
             }
+            // Remove existing tag links
+            existingRecipe.RecipeTags.Clear();
+
+            // Add selected tags back
+            foreach (var tagName in selectedTagNames)
+            {
+                var tag = _db.Tags.FirstOrDefault(t => t.Name == tagName);
+
+                if (tag == null)
+                {
+                    tag = new Tag { Name = tagName };
+                    _db.Tags.Add(tag);
+                }
+
+                existingRecipe.RecipeTags.Add(new RecipeTag
+                {
+                    Recipe = existingRecipe,
+                    Tag = tag
+                });
+            }
+
+            //RemoveUnusedTags(); // Not tested properly
             _db.SaveChanges();
         }
         public void Delete(string id)
@@ -123,6 +157,7 @@ namespace ReciPies.Services
             if (recipe == null) return;
 
             _db.Recipes.Remove(recipe);
+            RemoveUnusedTags();
             _db.SaveChanges();
         }
     }

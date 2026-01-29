@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ReciPies.Models
 {
@@ -25,9 +26,11 @@ namespace ReciPies.Models
     {
         public int Id { get; set; }
         public string RecipeId { get; set; } = default!;
-        public string Name { get; set; } = "";
-        public double Amount { get; set; }
-        public string Unit { get; set; } = "";
+        
+        //[Required(ErrorMessage = "Ingredient name is required")]
+        public string Name { get; set; } = ""; 
+        public double Amount { get; set; } // Make nullable
+        public string Unit { get; set; } = ""; // Make nullable
 
         public Recipe Recipe { get; set; } = default!;
     }

@@ -20,15 +20,19 @@ This is basically a database that stores recipe tables and uses a web interface 
 
 - Uses SQLite as its database, fast and efficient.
 - Several ways of setting it up, should cover most users.
+- With the web interface most devices should be covered.
+- The ability to upload pictures to a recipe.
 
 ## Planned features
 
-- Some sort of admin login, or accounts in general. Not everyone should be allowed to edit/deleting recipes.
+- Some sort of admin login, or accounts in general. Not everyone should be allowed to edit/delete recipes.
 - Instruction photos in the description of the recipe, might help some users.
+- Allow markdown (or similar) to certain text fields to allow customization of text (headings, images, lists, etc.)
+- Tag and name filtering on the home page
 
 ## Known issues
 
-- Adding new tags to a recipe doesn't do anything
+- None atm
 
 ## How to set up
 

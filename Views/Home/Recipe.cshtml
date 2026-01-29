@@ -26,7 +26,18 @@ TODO: Redo CSS files
             </div>
                 <div class="meta-container">
                     <!-- Rating here maybe -->
-                    <span>⏱️ @Model.TimeMinutes min</span>
+                    @{
+                        int? hours = Model.TimeMinutes / 60;
+                        int? minutes = Model.TimeMinutes - (hours * 60);
+                    }
+                    @if (hours > 0)
+                    {
+                        <span>⏱️ @hours h @minutes min</span>
+                    }
+                    else
+                    {
+                        <span>⏱️ @minutes min</span>
+                    }
                     <span>🍽️ @Model.Portions portions</span>
                 </div>
                 <p>@Model.Description</p>
