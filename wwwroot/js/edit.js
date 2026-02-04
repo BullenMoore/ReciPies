@@ -49,22 +49,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Tags
-    const modal = document.getElementById("tag-modal");
-    const modalOpenButton = document.getElementById("open-tag-modal");
-    const modalDoneButton = document.getElementById("done-tags");
-    const modalAddButton = document.getElementById("add-new-tag");
+    const tagModal = document.getElementById("tag-modal");
+    const tagModalOpenButton = document.getElementById("open-tag-modal");
+    const tagModalDoneButton = document.getElementById("done-tags");
+    const tagModalAddButton = document.getElementById("add-new-tag");
     const modalTagList = document.getElementById("modal-tag-list");
     const tagContainer = document.getElementById("tags");
     const newTagField = document.getElementById("new-tag-input");
 
-    modalOpenButton.addEventListener("click", function () {
-        modal.style.display = "block";
+    tagModalOpenButton.addEventListener("click", function () {
+        tagModal.style.display = "block";
     })
-    modalDoneButton.addEventListener("click", function () {
-        modal.style.display = "none";
+    tagModalDoneButton.addEventListener("click", function () {
+        tagModal.style.display = "none";
         rebuildTagsFromModal();
     })
-    modalAddButton.addEventListener("click", function () {
+    tagModalAddButton.addEventListener("click", function () {
         const newTagName = newTagField.value.trim();
         if (!newTagName) return;
 
@@ -116,8 +116,20 @@ document.addEventListener("DOMContentLoaded", function () {
             ${name}
             <input type="hidden" name="SelectedTagNames" value="${name}" />
         </span>
-    `;
+        `;
         tagContainer.insertAdjacentHTML("beforeend", html);
     }
+    
+    // Images
+    const imageModal = document.getElementById("image-modal");
+    const imageModalOpenButton = document.getElementById("open-images-modal");
+    const imageModalDoneButton = document.getElementById("done-images");
 
+    imageModalOpenButton.addEventListener("click", function () {
+        imageModal.style.display = "block";
+    })
+    imageModalDoneButton.addEventListener("click", function () {
+        imageModal.style.display = "none";
+    })
+    
 });

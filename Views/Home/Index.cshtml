@@ -8,9 +8,9 @@
 <h1>This is a website</h1>
 
 <select>
-    @foreach (var tag in Model.Tags) // Tags are ordered alphabetically (A->Z)
+    @foreach (var tag in Model.Tags) // Tags are ordered alphabetically (A->Z) from db
     {
-        <option value="@tag.Name">@tag.Name</option>
+        <option value="@tag.Id">@tag.Name</option>
     }
 </select>
 

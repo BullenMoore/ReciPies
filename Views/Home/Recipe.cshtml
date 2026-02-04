@@ -1,14 +1,10 @@
-@model ReciPies.Models.Recipe
+@model ReciPies.Models.DTOs.RecipeViewDto
 
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.Recipe.Title;
 }
 
-<!-- 
-TODO: Add anchors
-TODO: Redo CSS files
--->
-<form action="/edit/@Model.Id">
+<form action="/edit/@Model.Recipe.Id">
     <input type="submit" value="Edit recipe" />
 </form>
 
@@ -17,9 +13,9 @@ TODO: Redo CSS files
     <!-- Overview -->
     <div class="overview-container">
         <div class="summary-container">
-            <h1>@Model.Title</h1>
+            <h1>@Model.Recipe.Title</h1>
             <div class="tag-container">
-                @foreach (var tag in Model.RecipeTags)
+                @foreach (var tag in Model.Recipe.RecipeTags)
                 {
                     <span class="tag">@tag.Tag.Name</span>
                 }
@@ -27,8 +23,8 @@ TODO: Redo CSS files
                 <div class="meta-container">
                     <!-- Rating here maybe -->
                     @{
-                        int? hours = Model.TimeMinutes / 60;
-                        int? minutes = Model.TimeMinutes - (hours * 60);
+                        int? hours = Model.Recipe.TimeMinutes / 60;
+                        int? minutes = Model.Recipe.TimeMinutes - (hours * 60);
                     }
                     @if (hours > 0)
                     {
@@ -38,19 +34,19 @@ TODO: Redo CSS files
                     {
                         <span>⏱️ @minutes min</span>
                     }
-                    <span>🍽️ @Model.Portions portions</span>
+                    <span>🍽️ @Model.Recipe.Portions portions</span>
                 </div>
-                <p>@Model.Description</p>
+                <p>@Model.Recipe.Description</p>
             <div class="source-container">
-                @if (!string.IsNullOrEmpty(Model.Source)) // Is this even necessary? If no text, no div (essentially)
+                @if (!string.IsNullOrEmpty(Model.Recipe.Source)) // Is this even necessary? If no text, no div (essentially)
                 {
-                    if (!string.IsNullOrEmpty(Model.SourceUrl))
+                    if (!string.IsNullOrEmpty(Model.Recipe.SourceUrl))
                     {
-                        <p>Source: <a href="@Model.SourceUrl" target="_blank">@Model.Source</a></p>
+                        <p>Source: <a href="@Model.Recipe.SourceUrl" target="_blank">@Model.Recipe.Source</a></p>
                     }
                     else
                     {
-                        <p>@Model.Source</p>
+                        <p>@Model.Recipe.Source</p>
                     }
                 }
             </div>
@@ -58,11 +54,11 @@ TODO: Redo CSS files
         
         <div class="image-container">
             @{
-                var mainImage = Model.Images.FirstOrDefault(i => i.IsMain);
+                var mainImage = Model.Recipe.Images.FirstOrDefault(i => i.IsMain);
             }
             @if (mainImage != null)
             {
-                <img src="@mainImage.Path" alt="@Model.Title"/>
+                <img src="@mainImage.Path" alt="@Model.Recipe.Title"/>
             }
         </div>
     </div>
@@ -73,7 +69,7 @@ TODO: Redo CSS files
         <div class="ingredients-container">
             <h2>Ingredients</h2>
             <ul>
-            @foreach (var ingredient in Model.Ingredients)
+            @foreach (var ingredient in Model.Recipe.Ingredients)
                 {
                     <li class="ingredient">
                         @if (ingredient.Amount != 0)
@@ -88,18 +84,18 @@ TODO: Redo CSS files
         
         <div class="instructions-container">
             <h2>Instructions</h2>
-            <div class="instructions">
-                <p>@Model.Instructions</p>
+            <div class="instructions" style="display: block">
+                @Html.Raw(Model.InstructionsHtml) <!-- Render block wise? -->
             </div>
         </div>
     </div>
 
     <!-- Bottom/Other -->
-    @if (!string.IsNullOrWhiteSpace(Model.Nutrition))
+    @if (!string.IsNullOrWhiteSpace(Model.Recipe.Nutrition))
     {
         <div class="nutrition">
             <h2>Nutrition</h2>
-            <p>@Model.Nutrition</p>
+            <p>@Model.Recipe.Nutrition</p>
         </div>
     }
 </div>

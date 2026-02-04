@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ReciPies.App_Data;
 using ReciPies.Models;
 using ReciPies.Services;
 
@@ -32,17 +31,27 @@ public class HomeController : Controller
     {
         // Load a recipe by ID into view mode
         var recipe = _recipes.GetById(id);
-        return View(recipe);
+
+        if (recipe == null)
+        {
+            return NotFound();
+        }
+        return View(new DTOs.RecipeViewDto { Recipe = recipe });
     }
 
     [Route("edit/{id}")]
     public IActionResult Edit(string id)
     {
         // Load recipe by ID into edit mode
-        
+        var recipe = _recipes.GetById(id);
+
+        if (recipe == null)
+        {
+            return NotFound();
+        }
         var vm = new DTOs.EditRecipeDto
         {
-            Recipe = _recipes.GetById(id),
+            Recipe = recipe,
             AllTags = _recipes.GetTags()
         };
         return View(vm);
@@ -57,7 +66,7 @@ public class HomeController : Controller
 
     public IActionResult Save(DTOs.EditRecipeDto model)
     {
-        _recipes.Update(model.Recipe, model.SelectedTagNames);
+        _recipes.Update(model.Recipe, model.SelectedTagNames, model.Images);
         
         return RedirectToAction("Recipe", "Home", new { id = model.Recipe.Id });
     }

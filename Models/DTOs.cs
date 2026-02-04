@@ -1,3 +1,5 @@
+using Markdig;
+
 namespace ReciPies.Models;
 
 public class DTOs
@@ -9,17 +11,26 @@ public class DTOs
         public string Description { get; set; } = "";
         public string? ImagePath { get; set; }
     }
-    
     public class HomeViewmodel
     {
         public List<RecipeCardDto> RecipeCards { get; set; } = new();
         public List<Tag> Tags { get; set; } = new();
     }
-
+    public class RecipeViewDto
+    {
+        public Recipe Recipe { get; set; } = null!;
+        public string InstructionsHtml => Markdown.ToHtml(Recipe.Instructions ?? "", MarkdownPipeline);
+        
+        private static readonly MarkdownPipeline MarkdownPipeline =
+            new MarkdownPipelineBuilder()
+                .DisableHtml()
+                .Build();
+    }
     public class EditRecipeDto
     {
         public Recipe Recipe { get; set; } = new();
         public List<Tag> AllTags { get; set; } = new();
         public List<string> SelectedTagNames { get; set; } = new();
+        public List<IFormFile> Images { get; set; } = new();
     }
 }

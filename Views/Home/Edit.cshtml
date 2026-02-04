@@ -7,8 +7,8 @@
 <!--
 TODO:
 Fix tag editing
-Add classes to all inputs
-Markdown (or similar) to certain text fields
+Add classes to all inputs (CSS)
+The ability to upload images
 -->
 
 <form asp-action="Save" method="POST">
@@ -32,7 +32,7 @@ Markdown (or similar) to certain text fields
                                    data-tag-name="@tag.Name"
                                    @(Model.Recipe.RecipeTags.Any(rt => rt.TagId == tag.Id) ? "checked" : "") />
                             @tag.Name
-                        </label>
+                        </label> // Currently bugged, tags are added but not in right order.
                     }
                 </div>
 
@@ -40,6 +40,31 @@ Markdown (or similar) to certain text fields
 
                 <button type="button" id="add-new-tag">Add</button>
                 <button type="button" id="done-tags">Done</button>
+            </div>
+        </div>
+        
+        <div id="image-modal" class="modal">
+            <div class="modal-content">
+                <h3>Tags</h3>
+
+                <div class="modal-image-list" id="modal-image-list">
+                    @foreach (var image in Model.Recipe.Images)
+                    {
+                        <div id="image" class="image">
+                            <img src="@image.Path" alt="@image.IsMain"/>
+                            <button type="button" id="delete-image">✖</button> <!-- class? -->
+                        </div>
+                    }
+                </div>
+                
+                <div class="image-upload">
+                    <label>
+                        Upload image:
+                        <input type="file" name="Images" accept="image/*" multiple/>
+                    </label>
+                </div>
+                
+                <button type="button" id="done-images">Done</button>
             </div>
         </div>
 
@@ -85,6 +110,7 @@ Markdown (or similar) to certain text fields
                 {
                     <img src="@mainImage.Path" alt="@Model.Recipe.Title"/>
                 }
+                <button type="button" id="open-images-modal">Edit images</button>
             </div>
         </div>
 
@@ -108,7 +134,7 @@ Markdown (or similar) to certain text fields
             <div class="instructions-container">
                 <h2>Instructions</h2>
                 <div class="instructions">
-                    <textarea asp-for="Recipe.Instructions"></textarea>
+                    <textarea asp-for="Recipe.Instructions"></textarea> 
                 </div>
             </div>
         </div>

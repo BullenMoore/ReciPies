@@ -7,13 +7,16 @@ namespace ReciPies.Services
     public class RecipeService
     {
         private static readonly Random _random = new();
+        private static IWebHostEnvironment _webEnv;
         private readonly RecipeDbContext _db;
+        
         
         // Save Recipe numbers here to save time?
         private List<string> existingRecipeIds;
         
-        public RecipeService(IHostEnvironment env, RecipeDbContext db)
+        public RecipeService(IWebHostEnvironment webEnv, RecipeDbContext db)
         {
+            _webEnv = webEnv;
             _db = db;
             existingRecipeIds = GetRecipeIds();
         }
@@ -41,6 +44,32 @@ namespace ReciPies.Services
             if (unusedTags.Count == 0) return;
 
             _db.Tags.RemoveRange(unusedTags);
+            _db.SaveChanges();
+        }
+
+        private void SaveRecipeImage(string id, IFormFile file)
+        {
+            var uploadsRoot = Path.Combine(
+                _webEnv.WebRootPath,
+                "images"
+            );
+            
+            var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsRoot, fileName);
+
+            // Add image to "/images/"
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            // Create link in db
+            _db.RecipeImages.Add(new RecipeImage
+            {
+                RecipeId = id,
+                Path = $"/images/{fileName}",
+                IsMain = false
+            });
             // Remember to save to db after calling this function
         }
 
@@ -77,16 +106,23 @@ namespace ReciPies.Services
         }
         public Recipe? GetById(string id)
         {
-            return _db.Recipes
+            Recipe recipe = _db.Recipes
                 .Include(r => r.Images)
                 .Include(r => r.Ingredients)
                 .Include(r => r.RecipeTags)
                 .ThenInclude(rt => rt.Tag)
                 .FirstOrDefault(r => r.Id == id);
+            
+            if (recipe != null)
+            {
+                recipe.RecipeTags = recipe.RecipeTags
+                    .OrderBy(rt => rt.Tag.Name)
+                    .ToList();
+            }
+            return recipe;
         }
         public string Create()
         {
-            // Generate an ID
             string id = GenerateRecipeNumber();
             
             // Create an empty recipe with that ID
@@ -97,7 +133,7 @@ namespace ReciPies.Services
             
             return id;
         }
-        public void Update(Recipe updatedRecipe, List<string> selectedTagNames)
+        public void Update(Recipe updatedRecipe, List<string> selectedTagNames, List<IFormFile> Images)
         {
             var existingRecipe = _db.Recipes
                 .Include(r => r.Ingredients)
@@ -115,7 +151,7 @@ namespace ReciPies.Services
             existingRecipe.Instructions = updatedRecipe.Instructions;
             existingRecipe.Nutrition = updatedRecipe.Nutrition;
             
-            // Clears existing ingredients to avoid duplicates and add them back again
+            // Clears existing ingredients to avoid duplicates and then add them back again
             existingRecipe.Ingredients.Clear();
 
             foreach (var ingredient in updatedRecipe.Ingredients)
@@ -140,16 +176,24 @@ namespace ReciPies.Services
                     tag = new Tag { Name = tagName };
                     _db.Tags.Add(tag);
                 }
-
                 existingRecipe.RecipeTags.Add(new RecipeTag
                 {
                     Recipe = existingRecipe,
                     Tag = tag
                 });
             }
+            
+            // Add images
+            
+            foreach (var file in Images)
+            {
+                if (file.Length == 0)
+                    continue;
 
-            //RemoveUnusedTags(); // Not tested properly
+                SaveRecipeImage(updatedRecipe.Id, file);
+            }
             _db.SaveChanges();
+            RemoveUnusedTags();
         }
         public void Delete(string id)
         {
@@ -157,8 +201,8 @@ namespace ReciPies.Services
             if (recipe == null) return;
 
             _db.Recipes.Remove(recipe);
-            RemoveUnusedTags();
             _db.SaveChanges();
+            RemoveUnusedTags();
         }
     }
 }
