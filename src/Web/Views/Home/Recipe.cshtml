@@ -1,0 +1,108 @@
+@model Contracts.Requests.RecipeViewRequest
+
+@{
+    ViewData["Title"] = Model.Recipe.Title;
+}
+
+<form action="/edit/@Model.Recipe.Id">
+    <input type="submit" value="Edit recipe" />
+</form>
+
+<div class="recipe-container">
+    
+    <!-- Overview -->
+    <div class="overview-container">
+        <div class="summary-container">
+            <h1>@Model.Recipe.Title</h1>
+            <div class="tag-container">
+                @foreach (var tag in Model.Recipe.RecipeTags)
+                {
+                    <span class="tag">@tag.Tag.Name</span>
+                }
+            </div>
+                <div class="meta-container">
+                    <!-- Rating here maybe -->
+                    @{
+                        int? hours = Model.Recipe.TimeMinutes / 60;
+                        int? minutes = Model.Recipe.TimeMinutes - (hours * 60);
+                    }
+                    @if (hours > 0)
+                    {
+                        <span>⏱️ @hours h @minutes min</span>
+                    }
+                    else
+                    {
+                        <span>⏱️ @minutes min</span>
+                    }
+                    <span>🍽️ @Model.Recipe.Portions portions</span>
+                </div>
+                <p>@Model.Recipe.Description</p>
+            <div class="source-container">
+                @if (!string.IsNullOrEmpty(Model.Recipe.Source)) // Is this even necessary? If no text, no div (essentially)
+                {
+                    if (!string.IsNullOrEmpty(Model.Recipe.SourceUrl))
+                    {
+                        <p>Source: <a href="@Model.Recipe.SourceUrl" target="_blank">@Model.Recipe.Source</a></p>
+                    }
+                    else
+                    {
+                        <p>@Model.Recipe.Source</p>
+                    }
+                }
+            </div>
+        </div>
+        
+        <div class="image-container">
+            @{
+                var mainImage = Model.Recipe.Images.FirstOrDefault(i => i.IsMain);
+            }
+            @if (mainImage != null)
+            {
+                <img src="@mainImage.Path" alt="@Model.Recipe.Title"/>
+            }
+            else
+            {
+                <div>@Model.Recipe.Title</div>
+            }
+        </div>
+    </div>
+    
+    <!-- Middle -->
+    <div class="main-container">
+        
+        <div class="ingredients-container">
+            <h2>Ingredients</h2>
+            <ul>
+            @foreach (var ingredient in Model.Recipe.Ingredients)
+                {
+                    <li class="ingredient">
+                        <input type="checkbox">
+                        <label>
+                            @if (ingredient.Amount != 0)
+                            {
+                                @($"{ingredient.Amount} ")
+                            }
+                            @($"{ingredient.Unit} {ingredient.Name}")
+                        </label>
+                    </li>
+                }
+            </ul>
+        </div>
+        
+        <div class="instructions-container">
+            <h2>Instructions</h2>
+            <div class="instructions" style="display: block">
+                @Html.Raw(Model.InstructionsHtml) <!-- Render block wise? -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom/Other -->
+    @if (!string.IsNullOrWhiteSpace(Model.Recipe.Nutrition))
+    {
+        <div class="nutrition">
+            <h2>Nutrition</h2>
+            <p>@Model.Recipe.Nutrition</p>
+        </div>
+    }
+</div>

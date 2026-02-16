@@ -13,16 +13,16 @@
 
 This C# project was created out of necessity to host/view my own recipes on multiple devices. It is just a framework
 for adding, editing, deleting and categorizing recipes from a hosted website.<br/>
-**IMPORTANT: This is not a hosted service, you will need to host it yourself if you want your own recipe manager.**
+**IMPORTANT: This is not a hosted service, you will need to host or run it yourself if you want your own recipe manager.**
 
 This is basically a database that stores recipe tables and uses a web interface to view and edit them.
 
 ## Features
 
-- Uses SQLite as its database, fast and efficient.
-- Several ways of setting it up, should cover most users.
-- With the web interface most devices should be covered.
-- The ability to upload pictures to a recipe. (WIP)
+- Uses SQLite as its database, handles the storage of recipes gracefully and can be easily backup-ed.
+- Two use cases, either as a standalone app (Windows, hopefully Mac and Linux (Phone/tablet maybe)) or as a webpage-service for several users. (WIP)
+- Fit for all screen sizes, especially useful with the web-service. (WIP)
+- The ability to upload pictures to a recipe, both as the display photo and instruction photos (using Markdown). (WIP)
 
 ## Planned features
 
@@ -64,7 +64,7 @@ Mostly for bugfixes and typos.
 
 This program is licensed under the MIT License (see [`LICENSE.md`](LICENSE.md)). You are free to use, modify, distribute, and commercialize it under the terms of that license.
 
-While not required by the license, I kindly ask that the name and version of *ReciPies* is declared somewhere on your instance of the site (preferably with a link to this repository).
-See [`ATTRIBUTION.md`](ATTRIBUTION.md) for example(s).
+While not required by the license, I kindly ask that the name and version of *ReciPies* is declared somewhere on your instance of the site, preferably with a link to this repository.
+See [`ATTRIBUTION.md`](ATTRIBUTION.md) for examples.
 
 Third-party licenses are listed in [`THIRD-PARTY-NOTICES.txt`](THIRD-PARTY-NOTICES.txt).

@@ -1,0 +1,158 @@
+@model Web.ViewModels.EditRecipeDto
+
+@{
+    ViewData["Title"] = "Editing " + Model.Recipe.Title;
+}
+
+<!--
+TODO:
+Fix tag editing
+Add classes to all inputs (CSS)
+The ability to upload images
+-->
+
+<form asp-action="Save" method="POST" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Recipe.Id" />
+    <button type="submit">Save recipe</button>
+
+    <div class="recipe-container">
+        
+        <!-- MODAL ZONE -->
+        <div id="tag-modal" class="modal">
+            <div class="modal-content">
+                <h3>Tags</h3>
+
+                <div class="modal-tag-list" id="modal-tag-list">
+                    @foreach (var tag in Model.AllTags)
+                    {
+                        <label id="tag">
+                            <input type="checkbox"
+                                   class="tag-checkbox"
+                                   data-tag-id="@tag.Id"
+                                   data-tag-name="@tag.Name"
+                                   @(Model.Recipe.RecipeTags.Any(rt => rt.Id == tag.Id) ? "checked" : "") />
+                            @tag.Name
+                        </label>
+                    }
+                </div>
+
+                <input type="text" id="new-tag-input" placeholder="Add new tag" />
+
+                <button type="button" id="add-new-tag">Add</button>
+                <button type="button" id="done-tags">Done</button>
+            </div>
+        </div>
+        
+        <div id="image-modal" class="modal">
+            <div class="modal-content">
+                <h3>Images</h3>
+
+                <div class="modal-image-list" id="modal-image-list">
+                    @foreach (var image in Model.Recipe.Images)
+                    {
+                        <div id="image" class="image">
+                            <img src="@image.Path" alt="@image.IsMain"/>
+                            <button type="button" id="delete-image">✖</button> <!-- class? -->
+                        </div>
+                    }
+                </div>
+                
+                <div class="image-upload">
+                    <label>
+                        Upload image:
+                        <input type="file" name="Images" accept="image/*" multiple/>
+                    </label>
+                </div>
+                
+                <button type="button" id="done-images">Done</button>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="overview-container">
+            <div class="summary-container">
+                <h1>Title</h1>
+                <input asp-for="Recipe.Title"/>
+                <div class="tag-container">
+                    <div class="tags" id="tags">
+                        @foreach (var tag in Model.Recipe.RecipeTags)
+                        {
+                            <span class="tag">
+                                @tag.Tag.Name
+                                <input type="hidden" name="SelectedTagNames" value="@tag.Tag.Name"/>
+                            </span>
+                        }
+                    </div>
+                    <button type="button" id="open-tag-modal">Edit tags</button>
+                </div>
+                <div class="meta-container">
+                    <!-- Rating here maybe -->
+                    <label>⏱️ Minutes</label>
+                    <input class="svart" asp-for="Recipe.TimeMinutes" type="number"/>
+                    <label>🍽️ Portions</label>
+                    <input asp-for="Recipe.Portions" type="number"/>
+                </div>
+                <label>Description</label>
+                <textarea asp-for="Recipe.Description"></textarea>
+                <div class="source-container">
+                    <label>Source</label>
+                    <input asp-for="Recipe.Source"/>
+                    <label>Source URL</label>
+                    <input asp-for="Recipe.SourceUrl"/>
+                </div>
+            </div>
+
+            <div class="image-container">
+                @{
+                    var mainImage = Model.Recipe.Images.FirstOrDefault(i => i.IsMain);
+                }
+                @if (mainImage != null)
+                {
+                    <img src="@mainImage.Path" alt="@Model.Recipe.Title"/>
+                }
+                else
+                {
+                    <div>@Model.Recipe.Title</div>
+                }
+                <button type="button" id="open-images-modal">Edit images</button>
+            </div>
+        </div>
+
+        <!-- Middle -->
+        <div class="main-container">
+            <div class="ingredients-container">
+                <h2>Ingredients</h2>
+                <div class="ingredients" id="ingredients">
+                    @for (int i = 0; i < Model.Recipe.Ingredients.Count; i++)
+                    {
+                        <div class="ingredient">
+                            <input asp-for="Recipe.Ingredients[i].Amount"/>
+                            <input asp-for="Recipe.Ingredients[i].Unit"/>
+                            <input asp-for="Recipe.Ingredients[i].Name"/>
+                            <button type="button" class="remove-ingredient">✖</button>
+                        </div>
+                    }
+                </div>
+                <button type="button" id="add-ingredient">+ Add ingredient</button>
+            </div>
+            <div class="instructions-container">
+                <h2>Instructions</h2>
+                <div class="instructions">
+                    <textarea asp-for="Recipe.Instructions"></textarea> 
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom/Other -->
+        <div class="nutrition">
+            <label>Nutrition</label>
+            <textarea asp-for="Recipe.Nutrition"></textarea>
+        </div>
+    </div>
+</form>
+
+
+
+@section Scripts {
+    <script src="~/js/edit.js"></script>
+}

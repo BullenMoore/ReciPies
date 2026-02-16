@@ -1,0 +1,236 @@
+
+:root {
+    --background-color: #fff0db;
+    --overlay-color: #c9c3b8;
+    --recipe-container-color: white;
+    --accent-color: #dc3545;
+    --secondary-accent-color: #555;
+    
+    --hyperlink-color: #0077cc;
+
+    --topDivHeight: 150px;
+}
+
+body  {
+    background-color: var(--background-color);
+    color: black;
+}
+.dark-mode {
+    
+}
+
+/* _LAYOUT */
+
+.topOverlayDiv{
+    width: 100%;
+    background-color: var(--overlay-color);
+    top: 0;
+    position: fixed;
+    height: var(--topDivHeight);
+}
+.topDiv{
+    width: 100%;
+    top: 0;
+    height: var(--topDivHeight);
+}
+.bottomDiv {
+    width: 100%;
+    bottom: 0;
+    text-align: right;
+    color: var(--secondary-accent-color);
+    padding: 1rem;
+    /* Maybe static */
+}
+
+/* RECIPE VIEW */
+
+h1 {
+    text-align: center;
+    font-family: Raleway, sans-serif;
+    font-size: 3.5rem;
+}
+
+h2 {
+    text-align: center;
+    font-family: Raleway, sans-serif;
+    font-size: 2rem;
+}
+
+.recipe-container {
+    max-width: 1200px; /* 80 rem? */
+    margin: 20px auto;
+}
+
+.overview-container, .ingredient, .instructions, .nutrition-container {
+    display: flex;
+    background-color: var(--recipe-container-color);
+    border-radius: 18px;
+    margin: 20px 0;
+}
+.main-container {
+    display: flex;
+}
+
+.summary-container, .image-container, .ingredients-container, .instructions-container {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+.image-container {
+    border-radius: 0 18px 18px 0;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.image-container div {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.summary-container {
+    padding: 20px;
+    left: 1px;
+}
+.summary-container h1 {
+    text-align: left;
+}
+
+.tag-container {
+    margin: 10px 0;
+}
+
+.tag-container .tag {
+    background: var(--accent-color);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-right: 6px;
+    font-size: 0.9rem;
+}
+
+.meta-container span {
+    display: inline-block;
+    margin-right: 15px;
+    color: var(--secondary-accent-color); /* Should this text be specially colored? */
+}
+
+.source-container a {
+    color: var(--hyperlink-color);
+}
+
+.ingredients-container ul {
+    padding-left: 0;
+}
+
+.ingredient-list {
+    
+}
+
+.ingredient input {
+    cursor: pointer;
+}
+
+.ingredient input:checked + label {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+
+.instruction-list {
+    
+}
+
+/* MODAL */
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/*
+.nav-container {
+    background-color: black;
+    height: 100%;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+}
+
+.nav-container a {
+    color: white;
+    display: block;
+    font-size: 2rem;
+}
+*/
+
+/* INDEX PART */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: yellow;
+    justify-content: center;
+}
+
+.recipe-card {
+    background-color: white;
+    margin: 26px;
+    text-align: center;
+    height: 500px;
+    font-family: sans-serif;
+    font-size: 30px;
+    flex: 0 0 360px;
+    border-radius: 18px;
+    color: black;
+    text-decoration-line: none;
+}
+
+.container-img img {
+    height:240px;
+    width: 300px;
+    background-color: red;
+    display: block;
+    border-radius: 9px;
+    margin: 30px 30px 0 30px;
+    object-fit: cover
+}
+
+.container-heading {
+    font-size: 24px;
+    text-align: left;
+    padding: 25px 30px 20px;
+}
+
+.container-description {
+    font-size: 20px;
+    text-align: left;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .recipe-top {
+        flex-direction: row-reverse;
+    }
+
+    .recipe-bottom {
+        flex-direction: row-reverse;
+    }
+}
