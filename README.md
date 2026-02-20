@@ -52,7 +52,7 @@ TBA
 Those with a keen eye may notice the version formatting for every commit, for those interested that is explained here (X is the explained number):
 
 ### vX.#.#
-Major changes, such as major overhauls where a large piece of code or functionality is remade or introduced.
+Major changes and/or a milestone reached, such as when an overhaul is made or the program is officially released.
 
 ### v#.X.#
 Mostly for new feature introduction, such as a search field at the home page or introduction of a comment section.
