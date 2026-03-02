@@ -43,8 +43,12 @@ public class RecipeService
             Title = r.Title,
             Description = r.Description,
             ImagePath = r.Images?
-                .FirstOrDefault(i => i.IsMain)?.Path
-        }).ToList();
+                .FirstOrDefault(i => i.IsMain)?.Path,
+            TagIds = r.RecipeTags
+                .Select(rt => rt.TagId)
+                .ToList()
+        })
+            .ToList();
     }
 
     public Recipe? GetRecipeById(Guid id)
@@ -57,6 +61,11 @@ public class RecipeService
         return _recipeRepository.Create();
     }
 
+    public string SaveNewImageToStorage(string fileName, byte[] fileContent)
+    {
+        return _recipeImageRepository.SaveImage(fileName, fileContent);
+    }
+
     public void Update(Recipe updatedRecipe, List<string> selectedTagNames, List<ImageUpload> images)
     {
         _recipeRepository.Update(updatedRecipe);
@@ -65,18 +74,15 @@ public class RecipeService
 
         _recipeTagRepository.Update(updatedRecipe.Id, selectedTagNames);
         
+        var imagesToKeep = new List<Guid>();
         foreach (var file in images)
         {
-            if (file.Content.Length == 0) // Some verification that the file isn't malware is needed
-                continue;
-            
-            // Saves image to wwwroot
-            string filePath = _recipeImageRepository.SaveImage(file.FileName, file.Content);
-   
             // Links image to recipe in db
-            _recipeImageRepository.LinkImage(updatedRecipe.Id, filePath, file.IsMain);
+            var imageId = _recipeImageRepository.LinkImage(updatedRecipe.Id, file.RelationId, file.Path, file.IsMain);
+            imagesToKeep.Add(imageId);
         }
         _tagRepository.RemoveUnusedTags();
+        _recipeImageRepository.RemoveUnusedImages(updatedRecipe.Id, imagesToKeep);
     }
 
     public void Delete(Guid id)

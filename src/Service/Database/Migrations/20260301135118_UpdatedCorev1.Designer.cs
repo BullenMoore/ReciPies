@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Service.Database;
 
@@ -10,9 +11,11 @@ using Service.Database;
 namespace Service.Database.Migrations
 {
     [DbContext(typeof(ServiceDbContext))]
-    partial class ServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301135118_UpdatedCorev1")]
+    partial class UpdatedCorev1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
@@ -74,13 +77,19 @@ namespace Service.Database.Migrations
 
             modelBuilder.Entity("Core.RecipeTags.RecipeTag", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("RecipeId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("RecipeId", "TagId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
 
                     b.HasIndex("TagId");
 

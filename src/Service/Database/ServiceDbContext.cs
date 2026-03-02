@@ -17,4 +17,11 @@ public class ServiceDbContext : DbContext
     public DbSet<RecipeImage> RecipeImages => Set<RecipeImage>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<RecipeTag> RecipeTags => Set<RecipeTag>();
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ServiceDbContext).Assembly);
+    }
 }

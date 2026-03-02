@@ -3,12 +3,10 @@ using Core.Tags;
 
 namespace Core.RecipeTags;
 
-public class RecipeTag : IEntity
+public class RecipeTag
 {
-    public Guid Id { get; set; }
-    public DateTimeOffset UpdatedAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
     public Guid RecipeId { get; set; }
+    public Guid TagId { get; set; }
     
     public Recipe Recipe { get; set; }
     public Tag Tag { get; set; }

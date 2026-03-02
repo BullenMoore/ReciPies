@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalTagList = document.getElementById("modal-tag-list");
     const tagContainer = document.getElementById("tags");
     const newTagField = document.getElementById("new-tag-input");
+    const form = document.querySelector("form");
 
     tagModalOpenButton.addEventListener("click", function () {
         tagModal.style.display = "block";
@@ -130,6 +131,135 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     imageModalDoneButton.addEventListener("click", function () {
         imageModal.style.display = "none";
+        
+        // And more
+        
+        
     })
-    
+
+    const imageList = document.getElementById("modal-image-list");
+    const fileInput = document.querySelector('input[type="file"][name="NewImages"]');
+
+    /* -------------------- */
+    /* DELETE IMAGE         */
+    /* -------------------- */
+    document.addEventListener("click", (e) => {
+        if (!e.target.classList.contains("delete-image")) return;
+
+        const imageEl = e.target.closest(".image");
+        if (imageEl) {
+            const imageClientId = imageEl.getAttribute("data-client-id");
+            const clientIdEl = document.querySelector(
+                `input[name="NewImageClientIds"][value="${imageClientId}"]`);
+            
+            imageEl.remove();
+            if (clientIdEl) {
+                clientIdEl.remove();
+            }
+            updateMainIndexes();
+        }
+    });
+
+    /* -------------------- */
+    /* SELECT MAIN IMAGE    */
+    /* -------------------- */
+    document.addEventListener("change", (e) => {
+        if (e.target.name !== "MainImageIndex") return;
+
+        const selectedIndex = parseInt(e.target.value);
+
+        document.querySelectorAll("#modal-image-list .image")
+            .forEach((imgEl, index) => {
+
+                const isMainInput = imgEl.querySelector('input[name$=".IsMain"]');
+
+                if (isMainInput) {
+                    isMainInput.value = (index == selectedIndex);
+                }
+            });
+    });
+
+    /* -------------------- */
+    /* IMAGE UPLOAD PREVIEW */
+    /* -------------------- */
+    if (fileInput) {
+        fileInput.addEventListener("change", () => {
+
+            Array.from(fileInput.files).forEach(file => {
+                if (!file.type.startsWith("image/")) return;
+
+                const clientId = crypto.randomUUID();
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    addImagePreview(e.target.result, clientId);
+                };
+                reader.readAsDataURL(file);
+
+                const hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = "NewImageClientIds";
+                hidden.value = clientId;
+
+                form.appendChild(hidden);
+            });
+
+            // Reset input so same file can be selected again if needed
+            //fileInput.value = ""; Maybe not
+        });
+    }
+
+    /* -------------------- */
+    /* ADD IMAGE PREVIEW    */
+    /* -------------------- */
+    function addImagePreview(src, clientId) {
+        
+        const index = imageList.querySelectorAll(".image").length;
+
+        const html = `
+            <div class="image" data-client-id="${clientId}">
+                <img src="${src}" alt="">
+
+                <button type="button" class="delete-image">✖</button>
+
+                <input type="radio" 
+                       name="MainImageIndex" 
+                       value="${index}">
+
+                <input type="hidden" name="Images[${index}].Id" value="">
+                <input type="hidden" name="Images[${index}].Path" value="${src}">
+                <input type="hidden" name="Images[${index}].IsMain" value="false">
+                <input type="hidden" name="Images[${index}].ClientId" value="${clientId}">
+            </div>
+        `;
+
+        imageList.insertAdjacentHTML("beforeend", html);
+        updateMainIndexes();
+    }
+
+    /* -------------------- */
+    /* FIX INDEXES AFTER    */
+    /* DELETE               */
+    /* -------------------- */
+    function updateMainIndexes() {
+
+        document.querySelectorAll("#modal-image-list .image")
+            .forEach((imgEl, index) => {
+
+                const radio = imgEl.querySelector('input[type="radio"]');
+                if (radio) radio.value = index;
+
+                const idInput = imgEl.querySelector('input[name$=".Id"]');
+                const pathInput = imgEl.querySelector('input[name$=".Path"]');
+                const isMainInput = imgEl.querySelector('input[name$=".IsMain"]');
+                const clientIdInput = imgEl.querySelector('input[name$=".ClientId"]');
+
+                if (idInput) idInput.name = `Images[${index}].Id`;
+                if (pathInput) pathInput.name = `Images[${index}].Path`;
+                if (isMainInput) isMainInput.name = `Images[${index}].IsMain`;
+                if (clientIdInput) clientIdInput.name = `Images[${index}].ClientId`;
+            });
+        
+    }
+
 });

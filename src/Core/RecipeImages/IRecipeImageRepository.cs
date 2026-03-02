@@ -4,5 +4,7 @@ public interface IRecipeImageRepository
 {
     string SaveImage(string fileName, byte[] fileContent);
 
-    void LinkImage(Guid recipeId, string path, bool isMain);
+    Guid LinkImage(Guid recipeId, Guid? relationId, string path, bool isMain);
+
+    void RemoveUnusedImages(Guid recipeId, List<Guid> imageIdsToKeep);
 }

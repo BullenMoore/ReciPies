@@ -52,10 +52,24 @@ public class HomeController : Controller
         {
             return NotFound();
         }
+        
+        var images = new List<ImageEditItem>();
+
+        foreach (var image in recipe.Images)
+        {
+            images.Add(new ImageEditItem
+            {
+                Id = image.Id,
+                Path = image.Path,
+                IsMain = image.IsMain,
+            });
+        }
+        
         var vm = new EditRecipeDto
         {
             Recipe = recipe,
-            AllTags = _service.GetTags()
+            AllTags = _service.GetTags(),
+            Images = images
         };
         return View(vm);
     }
@@ -69,26 +83,147 @@ public class HomeController : Controller
 
     public IActionResult Save(EditRecipeDto model)
     {
-        
-        var uploads = new List<ImageUpload>();
 
-        foreach (var file in model.Images)
+        
+        var newImageCount = model.NewImages.Count;
+        
+        
+        /*
+        // New strat
+        
+        // Remove all Images that have Guid == null
+        
+        int index = 0;
+        while (index < model.Images.Count)
+        {
+            if (model.Images[index].Id == null)
+                model.Images.RemoveAt(index);
+            else
+                index++;
+        }
+        
+        // Add all NewImages to the model
+        
+        foreach (var file in model.NewImages)
         {
             if (file.Length == 0)
                 continue;
-
+            
             using var ms = new MemoryStream();
-            file.CopyToAsync(ms);
+            file.CopyTo(ms);
 
-            uploads.Add(new ImageUpload
+            var savedPath = _service.SaveNewImageToStorage(file.FileName, ms.ToArray());
+
+            model.Images.Add(new ImageEditItem
             {
-                FileName = file.FileName,
-                IsMain = false,
-                Content = ms.ToArray()
+                Id = null,
+                Path = savedPath,
+                IsMain = false // Is set later to correct value later
             });
         }
         
+        // Set that main image with MainImageIndex
+
+        if (model.MainImageIndex != null)
+        {
+            model.Images.ElementAt(model.MainImageIndex.Value).IsMain = true;
+        }
+
+        
+        var uploads = new List<ImageUpload>();
+
+        foreach (var image in model.Images)
+        {
+            uploads.Add(new ImageUpload
+                { 
+                    RelationId = image.Id,
+                    Path = image.Path,
+                    IsMain = image.IsMain,
+                }
+            );
+        }
+        
         _service.Update(model.Recipe, model.SelectedTagNames, uploads);
+       
+        
+        */
+        // Ends here
+        /*
+        // Store all new images in the storage directory first
+        foreach (var file in model.NewImages)
+        {
+            if (file.Length == 0)
+                continue;
+            
+            using var ms = new MemoryStream();
+            file.CopyTo(ms);
+
+            var savedPath = _service.SaveNewImageToStorage(file.FileName, ms.ToArray());
+            
+            var imagePlaceholder = model.Images.FirstOrDefault(img => img.Id == null);
+
+            model.Images.Add(new ImageEditItem
+            {
+                Id = null,
+                Path = savedPath,
+                IsMain = imagePlaceholder?.IsMain ?? false
+            });
+        }
+
+        // Remove loop here
+        int index = 0;
+        while (index < model.Images.Count)
+        {
+            if (model.Images[index].Id == null)
+                model.Images.RemoveAt(index);
+            else
+                index++;
+        }
+        
+        var uploads = new List<ImageUpload>();
+
+        foreach (var image in model.Images)
+        {
+            uploads.Add(new ImageUpload
+                { 
+                    RelationId = image.Id,
+                    Path = image.Path,
+                    IsMain = image.IsMain,
+                }
+            );
+        }
+        */
+        
+        for (int i = 0; i < model.NewImages.Count; i++)
+        {
+            var file = model.NewImages[i];
+            var clientId = model.NewImageClientIds[i];
+
+            var imageModel = model.Images
+                .First(x => x.ClientId == clientId);
+
+            using var ms = new MemoryStream();
+            file.CopyTo(ms);
+
+            var savedPath = _service.SaveNewImageToStorage(file.FileName, ms.ToArray());
+
+            imageModel.Path = savedPath;
+        }
+        
+        var uploads = new List<ImageUpload>();
+
+        foreach (var image in model.Images)
+        {
+            uploads.Add(new ImageUpload
+                { 
+                    RelationId = image.Id,
+                    Path = image.Path,
+                    IsMain = image.IsMain,
+                }
+            );
+        }
+        
+        _service.Update(model.Recipe, model.SelectedTagNames, uploads); // Response object?
         
         return RedirectToAction("Recipe", "Home", new { id = model.Recipe.Id });
     }

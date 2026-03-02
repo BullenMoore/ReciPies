@@ -48,14 +48,14 @@ public class RecipeRepository : IRecipeRepository
             .First(r => r.Id == updatedRecipe.Id);
         
         existingRecipe.Update(
-            title: updatedRecipe.Title,
-            description: updatedRecipe.Description,
-            portions: updatedRecipe.Portions,
-            timeMinutes: updatedRecipe.TimeMinutes,
-            instructions: updatedRecipe.Instructions,
-            nutrition: updatedRecipe.Nutrition,
-            source: updatedRecipe.Source,
-            sourceUrl: updatedRecipe.SourceUrl);
+            updatedRecipe.Title ??= "",
+            updatedRecipe.Description ??= "",
+            updatedRecipe.Portions ,
+            updatedRecipe.TimeMinutes,
+            updatedRecipe.Instructions ??= "",
+            updatedRecipe.Nutrition ??= "",
+            updatedRecipe.Source ??= "",
+            updatedRecipe.SourceUrl ??= "");
 
         _db.SaveChanges();
     }
@@ -80,8 +80,9 @@ public class RecipeRepository : IRecipeRepository
     {
         return _db.Recipes
             .AsNoTracking()
-            .OrderBy(r => r.Title)
+            .OrderBy(r => r.Title.ToLower())
             .Include(r => r.Images)
+            .Include(r => r.RecipeTags)
             .ToList();
     }
 }

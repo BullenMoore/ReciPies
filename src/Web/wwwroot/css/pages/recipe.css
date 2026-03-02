@@ -1,0 +1,109 @@
+h2 {
+    text-align: center;
+    font-family: Raleway, sans-serif;
+    font-size: 2rem;
+}
+
+.recipe-container {
+    max-width: 1200px; /* 80 rem? */
+    margin: 20px auto;
+}
+
+.overview-container, .ingredient, .instructions, .nutrition-container {
+    display: flex;
+    background-color: var(--recipe-container-color);
+    border-radius: 18px;
+    margin: 20px 0;
+}
+.main-container {
+    display: flex;
+}
+
+.summary-container, .image-container, .ingredients-container, .instructions-container {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+.image-container {
+    border-radius: 0 18px 18px 0;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.image-container div {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.summary-container {
+    padding: 20px;
+    left: 1px;
+}
+.summary-container h1 {
+    font-family: Raleway, sans-serif;
+    font-size: 3.5rem;
+    text-align: left;
+}
+
+.tag-container {
+    margin: 10px 0;
+}
+
+.tag-container .tag {
+    background: var(--accent-color);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-right: 6px;
+    font-size: 0.9rem;
+}
+
+.meta-container span {
+    display: inline-block;
+    margin-right: 15px;
+    color: var(--secondary-accent-color); /* Should this text be specially colored? */
+}
+
+.source-container a {
+    color: var(--hyperlink-color);
+}
+
+.ingredients-container ul {
+    padding-left: 0;
+}
+
+.ingredient-list {
+
+}
+
+.ingredient input {
+    cursor: pointer;
+}
+
+.ingredient input:checked + label {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+
+.instruction-list {
+
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .recipe-top {
+        flex-direction: row-reverse;
+    }
+
+    .recipe-bottom {
+        flex-direction: row-reverse;
+    }
+}

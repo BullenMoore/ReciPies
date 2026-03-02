@@ -10,27 +10,26 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/global.css" asp-append-version="true"/>
+    @RenderSection("Styles", required: false)
 </head>
 <body>
 
 @{ 
-    string currentVersion = "v0.6.0";
+    string currentVersion = "v0.7.0";
 }
 
 <div class="topDiv"></div>
 <div class="topOverlayDiv">
-    <h1><a href="/">Your logo or text here</a></h1>
+    <h5><a href="/">Your logo or text here</a></h5>
+    <button>Login</button>
 </div>
 
 @RenderBody()
 
 @RenderSection("Scripts", required: false)
 
-<!-- Render a bot div -->
-<div class="bottomDiv">
-    <h6>Made with <a href="https://github.com/BullenMoore/ReciPies">ReciPies @currentVersion</a></h6>
-</div>
+<footer class="global-footer">Made with <a href="https://github.com/BullenMoore/ReciPies">ReciPies @currentVersion</a></footer>
 
 </body>
 </html>

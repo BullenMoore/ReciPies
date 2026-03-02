@@ -3,12 +3,15 @@
 @{
     ViewData["Title"] = "Editing " + Model.Recipe.Title;
 }
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/pages/recipe.css" />
+    <link rel="stylesheet" href="~/css/pages/edit.css" />
+}
 
 <!--
 TODO:
-Fix tag editing
 Add classes to all inputs (CSS)
-The ability to upload images
 -->
 
 <form asp-action="Save" method="POST" enctype="multipart/form-data">
@@ -18,7 +21,7 @@ The ability to upload images
     <div class="recipe-container">
         
         <!-- MODAL ZONE -->
-        <div id="tag-modal" class="modal">
+        <div id="tag-modal" class="edit-modal">
             <div class="modal-content">
                 <h3>Tags</h3>
 
@@ -30,7 +33,7 @@ The ability to upload images
                                    class="tag-checkbox"
                                    data-tag-id="@tag.Id"
                                    data-tag-name="@tag.Name"
-                                   @(Model.Recipe.RecipeTags.Any(rt => rt.Id == tag.Id) ? "checked" : "") />
+                                   @(Model.Recipe.RecipeTags.Any(rt => rt.TagId == tag.Id) ? "checked" : "")/>
                             @tag.Name
                         </label>
                     }
@@ -43,24 +46,34 @@ The ability to upload images
             </div>
         </div>
         
-        <div id="image-modal" class="modal">
+        <div id="image-modal" class="edit-modal">
             <div class="modal-content">
                 <h3>Images</h3>
 
                 <div class="modal-image-list" id="modal-image-list">
-                    @foreach (var image in Model.Recipe.Images)
-                    {
-                        <div id="image" class="image">
-                            <img src="@image.Path" alt="@image.IsMain"/>
-                            <button type="button" id="delete-image">✖</button> <!-- class? -->
-                        </div>
-                    }
+                @for (int i = 0; i < Model.Images.Count; i++)
+                {
+                    <div class="image">
+                        <img src="@Model.Images[i].Path" alt="">
+
+                        <button type="button" class="delete-image">✖</button>
+
+                        <input type="radio"
+                               name="MainImageIndex"
+                               value="@i"
+                               @(Model.Images[i].IsMain ? "checked" : "") />
+
+                        <input type="hidden" asp-for="Images[i].Id" />
+                        <input type="hidden" asp-for="Images[i].Path" />
+                        <input type="hidden" asp-for="Images[i].IsMain" />
+                    </div>
+                }
                 </div>
                 
                 <div class="image-upload">
                     <label>
                         Upload image:
-                        <input type="file" name="Images" accept="image/*" multiple/>
+                        <input type="file" name="NewImages" accept="image/*" multiple/>
                     </label>
                 </div>
                 
@@ -150,8 +163,6 @@ The ability to upload images
         </div>
     </div>
 </form>
-
-
 
 @section Scripts {
     <script src="~/js/edit.js"></script>

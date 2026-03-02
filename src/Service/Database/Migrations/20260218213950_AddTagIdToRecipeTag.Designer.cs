@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Service.Database;
 
@@ -10,9 +11,11 @@ using Service.Database;
 namespace Service.Database.Migrations
 {
     [DbContext(typeof(ServiceDbContext))]
-    partial class ServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218213950_AddTagIdToRecipeTag")]
+    partial class AddTagIdToRecipeTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
@@ -52,8 +55,11 @@ namespace Service.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("Amount")
+                    b.Property<double>("Amount")
                         .HasColumnType("REAL");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -63,6 +69,10 @@ namespace Service.Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -74,13 +84,25 @@ namespace Service.Database.Migrations
 
             modelBuilder.Entity("Core.RecipeTags.RecipeTag", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("RecipeId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("RecipeId", "TagId");
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
 
                     b.HasIndex("TagId");
 
@@ -97,33 +119,27 @@ namespace Service.Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Instructions")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nutrition")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Portions")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Source")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SourceUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("TimeMinutes")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("UpdatedAt")

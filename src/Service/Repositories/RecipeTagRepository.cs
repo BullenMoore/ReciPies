@@ -16,6 +16,7 @@ public class RecipeTagRepository : IRecipeTagRepository
     
     public void Update(Guid recipeId, List<string> selectedRecipeTags)
     {
+        
         var existingRecipe = _db.Recipes
             .Include(r => r.RecipeTags)
             .First(r => r.Id == recipeId);
@@ -29,16 +30,20 @@ public class RecipeTagRepository : IRecipeTagRepository
 
             if (tag == null)
             {
-                tag = new Tag { Name = tagName };
+                tag = new Tag(tagName);
                 _db.Tags.Add(tag);
             }
 
             existingRecipe.RecipeTags.Add(new RecipeTag
-            {
-                Recipe = existingRecipe,
-                Tag = tag
+                {
+                RecipeId = existingRecipe.Id,
+                TagId = tag.Id
             });
         }
+ 
+        
+
+
         _db.SaveChanges();
     }
 }

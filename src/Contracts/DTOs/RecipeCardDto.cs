@@ -1,3 +1,5 @@
+using Core.RecipeTags;
+
 namespace Contracts.DTOs;
 
 public class RecipeCardDto
@@ -6,4 +8,5 @@ public class RecipeCardDto
     public string? Title { get; set; } = "";
     public string? Description { get; set; } = "";
     public string? ImagePath { get; set; }
+    public List<Guid>? TagIds { get; set; } 
 }

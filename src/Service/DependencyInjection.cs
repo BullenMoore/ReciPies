@@ -35,5 +35,11 @@ public static class DependencyInjection
         services.AddDbContext<ServiceDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}")
         );
+
+        // Create the database if it doesn't exist
+        if (true)
+        {
+            
+        }
     }
 }

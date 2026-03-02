@@ -1,0 +1,50 @@
+
+:root {
+    --background-color: #fff0db;
+    --overlay-color: #c9c3b8;
+    --recipe-container-color: white;
+    --accent-color: #dc3545;
+    --secondary-accent-color: #555;
+    --recipe-card-color: white;
+    --hyperlink-color: #0077cc;
+    --panel-bg: black; /*TBC*/
+
+    --topDivHeight: 150px;
+}
+
+body  {
+    background-color: var(--background-color);
+    color: black;
+}
+.dark-mode {
+    
+}
+
+.topOverlayDiv{
+    width: 100%;
+    background-color: var(--overlay-color);
+    top: 0;
+    position: fixed;
+    height: var(--topDivHeight);
+    z-index: 1;
+}
+.topDiv{
+    width: 100%;
+    top: 0;
+    height: var(--topDivHeight);
+}
+h5 {
+    text-align: center;
+    font-family: Raleway, sans-serif;
+    font-size: 3.5rem;
+}
+.global-footer {
+    width: 100%;
+    bottom: 0;
+    text-align: right;
+    color: var(--secondary-accent-color);
+    padding: 1rem;
+    /* Maybe static */
+}
+
+

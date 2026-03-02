@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = Model.Recipe.Title;
 }
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/pages/recipe.css" />
+}
 
 <form action="/edit/@Model.Recipe.Id">
     <input type="submit" value="Edit recipe" />

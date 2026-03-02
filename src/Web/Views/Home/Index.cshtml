@@ -1,47 +1,47 @@
-﻿@model Contracts.Requests.HomePageRequest
+﻿@using System.Text.Json
 
-
+@model Contracts.Requests.HomePageRequest
 @{
     ViewData["Title"] = "Home";
 }
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/pages/index.css" />
+}
 
-<h1>This is a website</h1>
-
-<select>
-    @foreach (var tag in Model.Tags) // Tags are ordered alphabetically (A->Z) from db
-    {
-        <option value="@tag.Id">@tag.Name</option>
-    }
-</select>
+<div class="filter-button">
+    <button id="toggle-filter">Filter</button>
+</div>
 
 <form method="POST" action="@Url.Action("New", "Home")">
     <button type="submit">New recipe</button>
 </form>
 
 <div id="recipe-list"></div>
-<div class="flex-container">
-
-@foreach (var recipeCard in @Model.RecipeCards)
-{
-    <a class="recipe-card" href="/recipe/@recipeCard.Id">
-        <div class="container-img">
-            <img src="@recipeCard.ImagePath" alt="@recipeCard.Title"/>
+<div class="page-container">
+    
+    <aside class="filter-panel" id="filter-panel">
+        <div class="filter-screen">
+            <input id="filter-text"/>
+            <ul id="filter-tags">
+                @foreach (var tag in Model.Tags) // Tags are ordered alphabetically (A->Z) from db
+                {
+                    <li>
+                        <input type="checkbox" value="@tag.Id"/>
+                        <label>@tag.Name</label>
+                    </li>
+                }
+            </ul>
         </div>
-        <div class="container-heading"><b>@recipeCard.Title</b></div>
-        <div class="container-description">@recipeCard.Description</div>
-    </a>
-}
-
+    </aside>
+    <div class="recipes-section">
+        <div class="recipes-container">
+            <!-- JS renders recipe cards here-->
+        </div>
+    </div>
 </div>
-
-
-
-
-
-<!-- 
-<div id="recipe-list"></div>
-<div class="flex-container">
-     Include your JavaScript
-    <script src="~/js/site.js"></script>
+    
+<div id="recipe-data"
+     data-recipes='@Html.Raw(JsonSerializer.Serialize(Model.RecipeCards))'>
 </div>
--->
+<script src="~/js/index.js"></script>

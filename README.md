@@ -22,20 +22,19 @@ This is basically a database that stores recipe tables and uses a web interface 
 - Uses SQLite as its database, handles the storage of recipes gracefully and can be easily backup-ed.
 - Two use cases, either as a standalone app (Windows, hopefully Mac and Linux (Phone/tablet maybe)) or as a webpage-service for several users. (WIP)
 - Fit for all screen sizes, especially useful with the web-service. (WIP)
-- The ability to upload pictures to a recipe, both as the display photo and instruction photos (using Markdown). (WIP)
+- The ability to upload pictures to a recipe, both as the display photo and instruction photos using Markdown.
 
 ## Planned features
 
 - Some sort of admin login, or accounts in general. Not everyone should be allowed to edit/delete recipes.
-- Tag and name filtering on the home page
 - A standalone app version, this would make the service into an application that is only "online" while the user needs it to be. For a single device if the user don't want a hosted service, but instead just wants an app for recipes (maybe a dedicated window as well).
 - Allowing scaling of ingredients.
 - Recalculate measurements when scaling. (example: 3 teaspoons = 1 tablespoon)
-- A proper way of adding and handling images
+- A page where renaming of existing tags can be done
 
 ## Known issues
 
-- Uploading images currently does nothing
+None
 
 ## How to set up
 
