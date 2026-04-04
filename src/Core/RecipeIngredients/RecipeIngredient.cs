@@ -3,7 +3,12 @@ using Core.Recipes;
 
 namespace Core.RecipeIngredients;
 
-public class RecipeIngredient // Recipe ingredients will not have update or create times, since they are a part of the recipe
+/*
+ * Recipe ingredients will not have update or create times,
+ * since they are a part of the recipe,
+ * but a recipe will have its updateTime updated if an ingredient changes/is added.
+ */
+public class RecipeIngredient 
 {
     
     public Guid Id { get; set; }

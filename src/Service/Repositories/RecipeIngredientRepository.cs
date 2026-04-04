@@ -31,5 +31,8 @@ public class RecipeIngredientRepository : IRecipeIngredientRepository
                 Unit = ingredient.Unit
             });
         }
+        existingRecipe.IngredientUpdate(); // Updates updatedAt time for recipe
+        
+        _db.SaveChanges();
     }
 }

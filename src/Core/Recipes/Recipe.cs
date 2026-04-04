@@ -52,4 +52,9 @@ public class Recipe : IEntity
         SourceUrl = sourceUrl;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
+
+    public void IngredientUpdate()
+    {
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
 }
