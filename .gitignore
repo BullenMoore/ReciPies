@@ -430,5 +430,7 @@ FodyWeavers.xsd
 
 # Mine
 *.db
+*.db-shm
+*.db-wal
 *.png
 *.jpg
