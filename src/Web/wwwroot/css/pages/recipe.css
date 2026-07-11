@@ -75,12 +75,16 @@ h2 {
     color: var(--hyperlink-color);
 }
 
+.ingredients-container {
+    padding-right: 15px;
+}
+
 .ingredients-container ul {
     padding-left: 0;
 }
 
-.ingredient-list {
-
+.ingredient {
+    padding: 10px;
 }
 
 .ingredient input {
@@ -90,6 +94,14 @@ h2 {
 .ingredient input:checked + label {
     text-decoration: line-through;
     opacity: 0.6;
+}
+
+.instructions-container {
+    padding-left: 15px;
+}
+
+.instructions p {
+    margin: 15px;
 }
 
 

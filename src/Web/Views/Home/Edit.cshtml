@@ -139,9 +139,9 @@ Add classes to all inputs (CSS)
                     @for (int i = 0; i < Model.Recipe.Ingredients.Count; i++)
                     {
                         <div class="ingredient">
-                            <input asp-for="Recipe.Ingredients[i].Amount"/>
-                            <input asp-for="Recipe.Ingredients[i].Unit"/>
-                            <input asp-for="Recipe.Ingredients[i].Name"/>
+                            <input data-field="Amount" asp-for="Recipe.Ingredients[i].Amount" type="number" />
+                            <input data-field="Unit" asp-for="Recipe.Ingredients[i].Unit"/>
+                            <input data-field="Name" asp-for="Recipe.Ingredients[i].Name"/>
                             <button type="button" class="remove-ingredient">✖</button>
                         </div>
                     }

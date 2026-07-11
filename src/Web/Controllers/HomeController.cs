@@ -1,8 +1,8 @@
 using System.Diagnostics;
+using Contracts;
 using Contracts.DTOs;
-using Contracts.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Service;
+using Security;
 using Web.Models;
 using Web.ViewModels;
 
@@ -11,46 +11,46 @@ namespace Web.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly RecipeService _service;
+    private readonly RecipeSecurity _security;
 
-    public HomeController(ILogger<HomeController> logger, RecipeService service)
+    public HomeController(ILogger<HomeController> logger, RecipeSecurity security)
     {
         _logger = logger;
-        _service = service;
+        _security = security;
     }
 
     public IActionResult Index()
     {
-        var vm = new HomePageRequest
-        {
-            RecipeCards = _service.GetFrontPageRecipes(),
-            Tags = _service.GetTags()
-        };
-        return View(vm);
+        var response = _security.GetIndexContent();
+        return View(response.Content);
     }
     
     [Route("recipe/{id}")]
     public IActionResult Recipe(Guid id)
     {
         // Load a recipe by ID into view mode
-        var recipe = _service.GetRecipeById(id);
+        var response = _security.GetRecipeViewById(id);
 
-        if (recipe == null)
+        if (response.Status == Status.NotFound)
         {
             return NotFound();
         }
-        return View(new RecipeViewRequest { Recipe = recipe });
+        return View(response);
     }
 
     [Route("edit/{id}")]
     public IActionResult Edit(Guid id)
     {
+        var response = _security.GetRecipeEditById(id);
         // Load recipe by ID into edit mode
-        var recipe = _service.GetRecipeById(id);
 
-        if (recipe == null)
+        if (response.Status == Status.NotFound)
         {
             return NotFound();
+        }
+        if (response.Status == Status.Forbidden)
+        {
+            return Forbid();
         }
         
         var images = new List<ImageEditItem>();
@@ -76,124 +76,20 @@ public class HomeController : Controller
 
     public IActionResult New()
     {
-        Guid id = _service.Create();
+        var response = _security.CreateRecipe();
         
-        return RedirectToAction("Edit", "Home", new { id = id });
+        if (response.Status == Status.Forbidden)
+        {
+            return Forbid();
+        }
+        
+        return RedirectToAction("Edit", "Home", new { id = response.Id });
     }
 
     public IActionResult Save(EditRecipeDto model)
     {
-
         
-        var newImageCount = model.NewImages.Count;
-        
-        
-        /*
-        // New strat
-        
-        // Remove all Images that have Guid == null
-        
-        int index = 0;
-        while (index < model.Images.Count)
-        {
-            if (model.Images[index].Id == null)
-                model.Images.RemoveAt(index);
-            else
-                index++;
-        }
-        
-        // Add all NewImages to the model
-        
-        foreach (var file in model.NewImages)
-        {
-            if (file.Length == 0)
-                continue;
-            
-            using var ms = new MemoryStream();
-            file.CopyTo(ms);
-
-            var savedPath = _service.SaveNewImageToStorage(file.FileName, ms.ToArray());
-
-            model.Images.Add(new ImageEditItem
-            {
-                Id = null,
-                Path = savedPath,
-                IsMain = false // Is set later to correct value later
-            });
-        }
-        
-        // Set that main image with MainImageIndex
-
-        if (model.MainImageIndex != null)
-        {
-            model.Images.ElementAt(model.MainImageIndex.Value).IsMain = true;
-        }
-
-        
-        var uploads = new List<ImageUpload>();
-
-        foreach (var image in model.Images)
-        {
-            uploads.Add(new ImageUpload
-                { 
-                    RelationId = image.Id,
-                    Path = image.Path,
-                    IsMain = image.IsMain,
-                }
-            );
-        }
-        
-        _service.Update(model.Recipe, model.SelectedTagNames, uploads);
-       
-        
-        */
-        // Ends here
-        /*
-        // Store all new images in the storage directory first
-        foreach (var file in model.NewImages)
-        {
-            if (file.Length == 0)
-                continue;
-            
-            using var ms = new MemoryStream();
-            file.CopyTo(ms);
-
-            var savedPath = _service.SaveNewImageToStorage(file.FileName, ms.ToArray());
-            
-            var imagePlaceholder = model.Images.FirstOrDefault(img => img.Id == null);
-
-            model.Images.Add(new ImageEditItem
-            {
-                Id = null,
-                Path = savedPath,
-                IsMain = imagePlaceholder?.IsMain ?? false
-            });
-        }
-
-        // Remove loop here
-        int index = 0;
-        while (index < model.Images.Count)
-        {
-            if (model.Images[index].Id == null)
-                model.Images.RemoveAt(index);
-            else
-                index++;
-        }
-        
-        var uploads = new List<ImageUpload>();
-
-        foreach (var image in model.Images)
-        {
-            uploads.Add(new ImageUpload
-                { 
-                    RelationId = image.Id,
-                    Path = image.Path,
-                    IsMain = image.IsMain,
-                }
-            );
-        }
-        */
-        
+        var imagesToSave = new List<SaveImageItem>();
         for (int i = 0; i < model.NewImages.Count; i++)
         {
             var file = model.NewImages[i];
@@ -205,9 +101,17 @@ public class HomeController : Controller
             using var ms = new MemoryStream();
             file.CopyTo(ms);
 
+            /*
             var savedPath = _service.SaveNewImageToStorage(file.FileName, ms.ToArray());
 
             imageModel.Path = savedPath;
+            */
+            
+            imagesToSave.Add(new SaveImageItem
+            {
+                FileName = file.FileName,
+                FileContent = ms.ToArray(),
+            });
         }
         
         var uploads = new List<ImageUpload>();
@@ -225,12 +129,28 @@ public class HomeController : Controller
         
         _service.Update(model.Recipe, model.SelectedTagNames, uploads); // Response object?
         
+        
+        
+        
+        
+        var response = _security.UpdateRecipe();
+        
+        if (response == Status.Forbidden)
+        {
+            return Forbid();
+        }
+        
         return RedirectToAction("Recipe", "Home", new { id = model.Recipe.Id });
     }
 
     public IActionResult Delete(Guid id)
     {
-        _service.Delete(id);
+        var status = _security.DeleteRecipe(id); // Check if the user have permission to delete, loginCreds instead of id?
+        
+        if (status == Status.Forbidden)
+        {
+            return Forbid();
+        }
         
         return RedirectToAction("Index", "Home");
     }

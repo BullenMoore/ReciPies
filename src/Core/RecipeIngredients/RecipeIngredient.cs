@@ -14,6 +14,7 @@ public class RecipeIngredient
     public Guid Id { get; set; }
     public Guid RecipeId { get; set; }
 
+    public int Index { get; set; } // The order the ingredients are shown
     public string Name { get; set; } = "";
     public double? Amount { get; set; }
     public string? Unit { get; set; }

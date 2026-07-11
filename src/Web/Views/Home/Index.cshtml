@@ -1,6 +1,6 @@
 ﻿@using System.Text.Json
 
-@model Contracts.Requests.HomePageRequest
+@model Contracts.Responses.HomePageResponse
 @{
     ViewData["Title"] = "Home";
 }
@@ -24,7 +24,7 @@
         <div class="filter-screen">
             <input id="filter-text"/>
             <ul id="filter-tags">
-                @foreach (var tag in Model.Tags) // Tags are ordered alphabetically (A->Z) from db
+                @foreach (var tag in Model.Content.Tags) // Tags are ordered alphabetically (A->Z) from db
                 {
                     <li>
                         <input type="checkbox" value="@tag.Id"/>
@@ -42,6 +42,6 @@
 </div>
     
 <div id="recipe-data"
-     data-recipes='@Html.Raw(JsonSerializer.Serialize(Model.RecipeCards))'>
+     data-recipes='@Html.Raw(JsonSerializer.Serialize(Model.Content.RecipeCards))'>
 </div>
 <script src="~/js/index.js"></script>

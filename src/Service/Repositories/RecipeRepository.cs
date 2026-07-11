@@ -28,6 +28,10 @@ public class RecipeRepository : IRecipeRepository
             recipe.RecipeTags = recipe.RecipeTags
                 .OrderBy(rt => rt.Tag.Name)
                 .ToList();
+            
+            recipe.Ingredients = recipe.Ingredients
+                .OrderBy(ir => ir.Index)
+                .ToList();
         }
         return recipe;
     }

@@ -7,7 +7,7 @@ using Core.Tags;
 
 namespace Service;
 
-public class RecipeService
+public class RecipeServiceOld
 {
     private readonly IRecipeRepository _recipeRepository;
     private readonly IRecipeImageRepository _recipeImageRepository;
@@ -15,7 +15,7 @@ public class RecipeService
     private readonly IRecipeTagRepository _recipeTagRepository;
     private readonly ITagRepository _tagRepository;
 
-    public RecipeService(
+    public RecipeServiceOld(
         IRecipeRepository recipeRepository,
         IRecipeImageRepository recipeImageRepository,
         IRecipeIngredientRepository recipeIngredientRepository,
@@ -33,9 +33,22 @@ public class RecipeService
     {
         return _recipeRepository.GetRecipeIds();
     }
-    public List<Recipe> GetAllRecipes() // Should this return a contract object? How does that affect other presentations?
+    public List<RecipeCardDto> GetFrontPageRecipes() // Should this return a contract object? How does that affect other presentations?
     {
-        return _recipeRepository.GetAll();
+        var recipes = _recipeRepository.GetAll();
+
+        return recipes.Select(r => new RecipeCardDto
+        {
+            Id = r.Id,
+            Title = r.Title,
+            Description = r.Description,
+            ImagePath = r.Images?
+                .FirstOrDefault(i => i.IsMain)?.Path,
+            TagIds = r.RecipeTags
+                .Select(rt => rt.TagId)
+                .ToList()
+        })
+            .ToList();
     }
 
     public Recipe? GetRecipeById(Guid id)
@@ -53,7 +66,7 @@ public class RecipeService
         return _recipeImageRepository.SaveImage(fileName, fileContent);
     }
 
-    public void Update(Recipe updatedRecipe, List<string> selectedTagNames, List<ImageUpload> images) // Cancer. Split up per parameter?
+    public void Update(Recipe updatedRecipe, List<string> selectedTagNames, List<ImageUpload> images)
     {
         _recipeRepository.Update(updatedRecipe);
 

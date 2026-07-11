@@ -23,28 +23,33 @@ document.addEventListener("DOMContentLoaded", function () {
             removeIngredient(e.target);
         }
     });
-    
-    function addIngredient(ingredientContainer) {
+
+    function addIngredient(container) {
         const html = `
             <div class="ingredient">
-                <input name="Recipe.Ingredients[${ingredientIndex}].Amount" type="number" step="any" />
-                <input name="Recipe.Ingredients[${ingredientIndex}].Unit" />
-                <input name="Recipe.Ingredients[${ingredientIndex}].Name"/>
+                <input data-field="Amount" type="number" />
+                <input data-field="Unit" />
+                <input data-field="Name" />
                 <button type="button" class="remove-ingredient">✖</button>
             </div>
         `;
-        ingredientContainer.insertAdjacentHTML("beforeend", html);
-        ingredientIndex++;
+        container.insertAdjacentHTML("beforeend", html);
+
+        reindexIngredients();
     }
 
     function removeIngredient(e) {
         e.closest(".ingredient").remove();
+        reindexIngredients();
+    }
+
+    function reindexIngredients() {
         const ingredients = document.querySelectorAll(".ingredient");
 
         ingredients.forEach((row, index) => {
-            row.querySelectorAll("input").forEach(input => {
-                input.name = input.name.replace(/\[\d+]/, `[${index}]`);
-            });
+            row.querySelector('[data-field="Amount"]').name = `Recipe.Ingredients[${index}].Amount`;
+            row.querySelector('[data-field="Unit"]').name   = `Recipe.Ingredients[${index}].Unit`;
+            row.querySelector('[data-field="Name"]').name   = `Recipe.Ingredients[${index}].Name`;
         });
     }
 

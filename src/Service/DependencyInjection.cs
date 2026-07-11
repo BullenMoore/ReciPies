@@ -16,7 +16,7 @@ public static class DependencyInjection
     public static void AddInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddScoped<RecipeService>();
+        services.AddScoped<RecipeServiceOld>();
         
         services.AddScoped<IRecipeRepository, RecipeRepository>();
         services.AddScoped<IRecipeImageRepository, RecipeImageRepository>();
@@ -35,11 +35,5 @@ public static class DependencyInjection
         services.AddDbContext<ServiceDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}")
         );
-
-        // Create the database if it doesn't exist
-        if (true)
-        {
-            
-        }
     }
 }

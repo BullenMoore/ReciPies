@@ -1,11 +1,17 @@
 using Core.Recipes;
 using Markdig;
 
-namespace Contracts.Requests;
+namespace Contracts.Responses;
 
-public class RecipeViewRequest
+public class ViewRecipeResponse
 {
-    public Recipe Recipe { get; set; } = null!;
+    public Status Status { get; set; }
+    public Content? Content { get; set; }
+}
+
+public partial class Content {
+
+    public Recipe Recipe { get; set; }
     public string InstructionsHtml => Markdown.ToHtml(Recipe.Instructions ?? "", MarkdownPipeline);
         
     private static readonly MarkdownPipeline MarkdownPipeline =

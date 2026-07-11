@@ -14,14 +14,9 @@ public class RecipeImageRepository : IRecipeImageRepository
 
     public string SaveImage(string fileName, byte[] fileContent)
     {
-        var solutionRoot = Path.GetFullPath("..");
-        
-        var storageRoot = Path.Combine(solutionRoot, "Service", "Database", "Storage", "Images");
-        Directory.CreateDirectory(storageRoot);
-
         var extension = Path.GetExtension(fileName);
         var newFileName = Guid.NewGuid() + extension;
-        var filePath = Path.Combine(storageRoot, newFileName);
+        var filePath = Path.Combine(GetStoragePath(), newFileName);
 
         File.WriteAllBytes(filePath, fileContent);
         
@@ -76,8 +71,29 @@ public class RecipeImageRepository : IRecipeImageRepository
         foreach (var imageId in imagesToBeRemoved)
         {
             _db.Remove(imageId);
-            // Add delete from storage
+            DeleteImageFile(imageId);
         }
         _db.SaveChanges();
+    }
+    
+    public string GetStoragePath()
+    {
+        var solutionPath = Path.GetFullPath("..");
+        
+        var storagePath = Path.Combine(solutionPath, "Service", "Database", "Storage", "images");
+        Directory.CreateDirectory(storagePath);
+        
+        return storagePath;
+    }
+
+    public void DeleteImageFile(Guid imageId)
+    {
+        var imagePath = _db.RecipeImages
+            .FirstOrDefault(ri => ri.Id == imageId)
+            .Path;
+            
+        imagePath = Path.Combine(GetStoragePath(), "..", imagePath);
+            
+        File.Delete(imagePath);
     }
 }
