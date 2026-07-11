@@ -31,6 +31,9 @@ This is basically a database that stores recipe tables and uses a web interface 
 - Allowing scaling of ingredients.
 - Recalculate measurements when scaling. (example: 3 teaspoons = 1 tablespoon)
 - A page where renaming of existing tags can be done
+- Text fields that are required should force the user to fill them out to avoid errors (frontend or backend enforcement?)
+- Localization
+- Add user(s) (when implemented) to databases
 
 ## Known issues
 
