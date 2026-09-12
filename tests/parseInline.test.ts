@@ -188,21 +188,21 @@ describe("parseInline - correct syntax testing", () => {
 
     it("parses only time", () => {
         const result = parseInline(
-            "~{30%minuter}"
+            "~{00:30:15}"
         );
 
         expect(result).toEqual([
             {
                 type: "time",
-                amount: 30,
-                unit: "minuter"
+                minSeconds: 30 * 60 + 15,
+                maxSeconds: 30 * 60 + 15
             }
         ]);
     });
 
     it("parses text surrounding time", () => {
         const result = parseInline(
-            "Ställ i ugnen i ~{30%minuter} och vänta"
+            "Ställ i ugnen i ~{00:30} och vänta"
         );
 
         expect(result).toEqual([
@@ -212,8 +212,8 @@ describe("parseInline - correct syntax testing", () => {
             },
             {
                 type: "time",
-                amount: 30,
-                unit: "minuter"
+                minSeconds: 30 * 60,
+                maxSeconds: 30 * 60
             },
             {
                 type: "text",
@@ -222,40 +222,27 @@ describe("parseInline - correct syntax testing", () => {
         ]);
     });
 
-    it("parses several times surrounded by text", () => {
+    it("parses time with range", () => {
         const result = parseInline(
-            "Starta en timer på ~{20%minuter} och en på ~{50%minuter} av någon anledning"
+            "Låt stå ~{00:20-01:00:15}"
         );
 
         expect(result).toEqual([
             {
                 type: "text",
-                value: "Starta en timer på "
+                value: "Låt stå "
             },
             {
                 type: "time",
-                amount: 20,
-                unit: "minuter"
-            },
-            {
-                type: "text",
-                value: " och en på "
-            },
-            {
-                type: "time",
-                amount: 50,
-                unit: "minuter"
-            },
-            {
-                type: "text",
-                value: " av någon anledning"
+                minSeconds: 20 * 60,
+                maxSeconds: 60 * 60 + 15
             }
         ]);
     });
 
     it("parses text, ingredient, equipment and time together", () => {
         const result = parseInline(
-            "Blanda @florsocker{2%dl} och @smör{100%g} i en #bunke{}. Häll i en #form{} och grädda i ugnen i ~{1%timme}"
+            "Blanda @florsocker{2%dl} och @smör{100%g} i en #bunke{}. Häll i en #form{} och grädda i ugnen i ~{1}"
         );
 
         expect(result).toEqual([
@@ -301,8 +288,8 @@ describe("parseInline - correct syntax testing", () => {
             },
             {
                 type: "time",
-                amount: 1,
-                unit: "timme"
+                minSeconds: 60 * 60,
+                maxSeconds: 60 * 60
             }
         ]);
     });
