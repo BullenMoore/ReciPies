@@ -1,0 +1,18 @@
+Key; Purpose; Datatype
+
+title; Title of the recipe (only for display); string
+description; A short description of the recipe that can also be viewed in recipe cards; string
+category; What type of category the recipe has. Example, dinner, breakfast, dessert, etc.; string
+difficulty; Recipe difficulty level; string
+image; URL or path to image; string
+servings; The amount of serverings the recipe yields; number
+TODO: yield?
+cuisine; The cuisine the recipe is. Example, French, Italian, etc.; string
+diet; If the recipe is part of any diet; string
+time.prep?: string; TODO: What/How do we type time in here?
+time.cook?: string; TODO: What/How do we type time in here?
+time.required?: string; TODO: What/How do we type time in here?
+source.url; The URL to the recipe, if it has one; string
+source.name; The name of the source. If the recipe has a source URL this name should be clickable; string
+source.author; The author of the recipe; string
+tag; A list of tags for the recipe. These can be used to search and filter recipes; string[]

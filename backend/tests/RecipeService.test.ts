@@ -1,26 +1,37 @@
 import { describe, expect, it } from "vitest";
 import {RecipeService} from "../src/service/RecipeService";
 
-describe("RecipeService", () => {
-    it("getDirectoryContent", async () => {
+describe("RecipeService - correct path usage", () => {
+    const recipeService = new RecipeService();
 
-        const recipeService = new RecipeService();
+    it("getDirectoryContent", async () => {
 
         const result = await recipeService.getDirectoryContent("recipes/Fika");
 
-        expect(result).toEqual(
-
-        )
+        expect(result).toMatchObject({
+            type: "recipe",
+        });
     })
 
     it("getFileContent", async () => {
 
-        const recipeService = new RecipeService();
-
         const result = await recipeService.getRecipe("recipes/Fika/Banana bread.cook");
 
-        expect(result).toEqual(
-
-        )
+        expect(result).toMatchObject({
+            type: "recipe",
+        });
     })
+})
+
+describe("RecipeService - incorrect path usage / error handling", () => {
+    const recipeService = new RecipeService();
+
+    it("throw error when trying to access file outside of root directory", async () => {
+
+        await expect(
+            recipeService.getRecipe("recipes/../.env")
+        ).rejects.toThrow(
+            "Cannot access files outside the recipes directory."
+        );
+    });
 })

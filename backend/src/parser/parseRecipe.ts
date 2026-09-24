@@ -44,10 +44,10 @@ export function parseRecipe(text: string, metadataOnly: boolean) : Recipe {
         if (key === "title") recipe.title = value;
         if (key === "description" || key === "introduction") recipe.description = value;
         if (key === "category" || key === "course") recipe.category = value;
-        if (key === "locale") recipe.locale = value;
         if (key === "difficulty") recipe.difficulty = value;
         if (key === "image" || key === "picture") recipe.image = value;
-        if (key === "servings" || key === "serves" || key === "yield") recipe.servings = Number.parseInt(value, 10); //TODO: This needs to be split into amount and unit, because scaling
+        if (key === "servings" || key === "serves") recipe.servings = Number.parseInt(value, 10); //TODO: This needs to be split into amount and unit, because scaling. Or use the time syntax like the recipes
+        //TODO: yield?
         if (key === "cuisine") recipe.cuisine = value;
         if (key === "diet") recipe.diet = value;
 

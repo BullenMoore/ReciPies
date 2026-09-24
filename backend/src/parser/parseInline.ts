@@ -33,7 +33,7 @@ export function parseInline(text: string): RecipeElement[] {
             position = nextPosition;
         }
         else {
-            const {element, nextPosition} = parseText(text, position, line);
+            const {element, nextPosition} = parseText(text, position, /*line*/);
 
             elements.push(element);
             position = nextPosition;
@@ -115,8 +115,6 @@ function parseIngredient(
         unit += character;
         position++;
     }
-
-    //TODO: Should it error if the unit is an unrecognizeable one? Warning maybe?
 
     return {
         element: {
@@ -296,7 +294,7 @@ function parseTime(
 function parseText(
     text: string,
     start: number,
-    line: number
+    //line: number
 ): {
     element: TextElement;
     nextPosition: number;

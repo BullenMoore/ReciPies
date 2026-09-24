@@ -5,7 +5,6 @@ export class Recipe {
     title?: string;
     description?: string;
     category?: string;
-    locale?: string;
     difficulty?: string;
     image?: string;
     servings?: number;
