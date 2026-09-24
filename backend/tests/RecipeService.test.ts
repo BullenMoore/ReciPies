@@ -8,9 +8,17 @@ describe("RecipeService - correct path usage", () => {
 
         const result = await recipeService.getDirectoryContent("recipes/Fika");
 
-        expect(result).toMatchObject({
-            type: "recipe",
-        });
+        expect(result).toContainEqual(
+            expect.objectContaining({
+                type: "recipe"
+            })
+        );
+
+        expect(result).toContainEqual(
+            expect.objectContaining({
+                type: "directory"
+            })
+        );
     })
 
     it("getFileContent", async () => {
