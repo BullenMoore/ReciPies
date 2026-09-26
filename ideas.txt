@@ -4,5 +4,3 @@ Ranges to ingredients? Some recipes use stuff like 2-3 eggs because eggs have va
 
 Alternatives to ingredients. As another user put it "flambé with @cognac or @whisky". A new syntax could be added to
 link two ingredients as swapable. Maybe something like @[1]cognac or @[1]whisky?
-
-Two endpoints for Directory Content, getDirectories and getRecipes
