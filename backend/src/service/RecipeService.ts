@@ -86,17 +86,19 @@ export class RecipeService {
     //TODO: Do we have test that try edge cases for resolved paths?
 
     // Check if the request is within the /recipes folder
-    private resolveAndValidatePath(searchedPath: string): string {
-
+    private resolveAndValidatePath(relativePath: string = ""): string {
         const rootPath = path.resolve(this.root);
-        const requestedPath = path.resolve(searchedPath);
+        const requestedPath = path.resolve(rootPath, relativePath);
 
         if (
             requestedPath !== rootPath &&
             !requestedPath.startsWith(rootPath + path.sep)
         ) {
-            throw new Error("Cannot access files outside the recipes directory.");
+            throw new Error(
+                `Cannot access files outside the recipes directory: ${requestedPath}`
+            );
         }
+
         return requestedPath;
     }
 }
