@@ -1,4 +1,4 @@
-import type {DirectoryEntry, RecipeFile} from "./DirectoryEntry";
+import type {RecipeDirectory, RecipeFile} from "./DirectoryEntry";
 
 import {parseRecipe} from "../parser/parseRecipe.ts";
 
@@ -12,7 +12,7 @@ export class RecipeService {
 
     private readonly root = "recipes";
 
-    async getDirectoryContent(givenPath: string): Promise<DirectoryEntry[]> {
+    async getDirectories (givenPath: string): Promise<RecipeDirectory[]> {
 
         const requestedPath = this.resolveAndValidatePath(givenPath);
 
@@ -20,7 +20,7 @@ export class RecipeService {
             withFileTypes: true
         });
 
-        const entries: DirectoryEntry[] = [];
+        const directories: RecipeDirectory[] = [];
 
         for (const file of files) {
 
@@ -29,28 +29,45 @@ export class RecipeService {
             // Directories
             if (file.isDirectory()) {
 
-                const entry: DirectoryEntry = {
+                const directory: RecipeDirectory = {
                     type: "directory",
                     name: file.name,
                     path: path
                 }
-                entries.push(entry);
+                directories.push(directory);
             }
+        }
+        return directories;
+    }
+
+    async getRecipes(givenPath: string): Promise<RecipeFile[]> {
+
+        const requestedPath = this.resolveAndValidatePath(givenPath);
+
+        const files = await fs.readdir(requestedPath, {
+            withFileTypes: true
+        });
+
+        const recipes: RecipeFile[] = [];
+
+        for (const file of files) {
+
+            const path = `${requestedPath}/${file.name}`;
 
             // .cook files
             if (file.isFile() && file.name.endsWith(".cook")) {
 
                 const text = await fs.readFile(path, "utf-8");
 
-                const entry: RecipeFile = {
+                const recipe: RecipeFile = {
                     type: "recipe",
                     path: path,
                     recipe: parseRecipe(text, true)
                 }
-                entries.push(entry);
+                recipes.push(recipe);
             }
         }
-        return entries;
+        return recipes;
     }
 
     async getRecipe(filePath: string): Promise<RecipeFile> {
