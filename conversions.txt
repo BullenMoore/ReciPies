@@ -1,0 +1,18 @@
+ReciPies should be able to convert measurements from one another. Like dl to cups, tablespoons to ounces, etc.
+
+This should be done by unifying on a single unit per type of measurement.
+
+For example 1 dl equals 100 ml. 1 cup equals 240 ml. The unifying measurement for volume units should thus be ml.
+A unifying measurement should exist for every type of unit (volume, weight, others?).
+
+Volume units, unified by ml:
+1 cl: 10 ml
+1 dl: 100 ml
+1 l: 1000 ml
+1 cup: 240 ml
+
+
+Weight units, unified by g:
+1 kg: 1000 g
+1 pound: 454 g
+1 oz: 28,35 g

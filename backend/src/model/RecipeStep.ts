@@ -1,5 +1,5 @@
-import type {RecipeElement} from "./RecipeElement";
+import type {RecipeElements} from "./RecipeElements.ts";
 
 export interface RecipeStep {
-    content: RecipeElement[];
+    content: RecipeElements[];
 }
