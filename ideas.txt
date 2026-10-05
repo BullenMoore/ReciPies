@@ -1,5 +1,3 @@
-Something for degrees? Since we already specifiy equipment and times, why not degrees?
-
 Ranges to ingredients? Some recipes use stuff like 2-3 eggs because eggs have varying sizes.
 
 Alternatives to ingredients. As another user put it "flambé with @cognac or @whisky". A new syntax could be added to
