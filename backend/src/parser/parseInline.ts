@@ -365,6 +365,8 @@ function parseDegree(
         )
     }
 
+    position = position + 2; // If everything is fine, move past unit and afterUnit
+
     return {
         element: {
             type: "degree",
