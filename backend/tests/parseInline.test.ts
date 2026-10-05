@@ -149,6 +149,42 @@ describe("parseInline - correct syntax testing", () => {
         ]);
     });
 
+    it("parses only degrees", () => {
+        const result = parseInline(
+            "¤{200%C}"
+        );
+
+        expect(result).toEqual([
+            {
+                type: "degree",
+                degrees: 200,
+                unit: "C",
+            }
+        ]);
+    });
+
+    it("parses text surrounding degrees", () => {
+        const result = parseInline(
+            "Sätt ugnen på ¤{200%C} och vänta."
+        );
+
+        expect(result).toEqual([
+            {
+                type: "text",
+                value: "Sätt ugnen på "
+            },
+            {
+                type: "degree",
+                degrees: 200,
+                unit: "C",
+            },
+            {
+                type: "text",
+                value: " och vänta."
+            }
+        ]);
+    });
+
     it("parses text, ingredient, equipment and time together", () => {
         const result = parseInline(
             "Blanda @florsocker{2%dl} och @smör{100%g} i en #bunke{}. Häll i en #form{} och grädda i ugnen i ~{1}"
@@ -206,10 +242,62 @@ describe("parseInline - correct syntax testing", () => {
 
 describe("parseInline - incorrect syntax testing / error handling", () => {
 
-    it("ingredient with incorrect amount", () => {
+    it("ingredient with incorrect number", () => {
 
         expect(() => parseInline("@Smör{ab45c%dl}")).toThrow("Invalid amount: ab45c");
     });
+
+    it("equipment with incorrect formatting", () => {
+
+        expect(() => parseInline("#Stor bunke{3%l}")).toThrow("Invalid formatting for equipment.");
+    });
+
+    it("time with incorrect structure", () => {
+
+        expect(() => parseInline("~{01:30:00:500}")).toThrow("Invalid time struture.");
+    });
+
+    it("time with incorrect range", () => {
+
+        expect(() => parseInline("~{01:30-01:40-01:50}")).toThrow("Invalid range in time struture.");
+    });
+
+    it("time with incorrect format", () => {
+
+        expect(() => parseInline("~{one:thirty}")).toThrow("Invalid time format:");
+    });
+
+    it("time with incorrect semantics (unrealistic time)", () => {
+
+        expect(() => parseInline("~{01:60}")).toThrow("Semantic time error:");
+
+        expect(() => parseInline("~{100:30}")).toThrow("Semantic time error:");
+
+        //expect(() => parseInline("~{00:00}")).toThrow("Semantic time error:"); Is a timer on 0 an error or bad input? Should it error?
+    });
+
+    it("degrees with incorrect structure", () => {
+
+        expect(() => parseInline("¤{200}")).toThrow("Invalid bracket structure:");
+    });
+
+    it("degrees with incorrect number", () => {
+
+        expect(() => parseInline("¤{two hundred%C}")).toThrow("Invalid degrees number:");
+    });
+
+    it("degrees with incorrect unit", () => {
+
+        expect(() => parseInline("¤{200%D}")).toThrow("Invalid degree unit:");
+
+        expect(() => parseInline("¤{200%}")).toThrow("Invalid degree unit:");
+    });
+
+    it("degrees with incorrect structure", () => {
+
+        expect(() => parseInline("¤{200%CF}")).toThrow("Invalid degree element structure:");
+    });
+
 
 
 });
