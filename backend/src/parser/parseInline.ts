@@ -228,7 +228,7 @@ function parseTime(
 
             if (timeArrayPosition > 2) {
                 throw new RecipeParseError(
-                    `Invalid time struture.` ,
+                    `Invalid time struture.` , //TODO: Add why?
                     "The time format cannot be longer than HH:MM:SS.",
                     line
                 )
@@ -241,7 +241,7 @@ function parseTime(
             timeArrayPosition = 0;
             if (rangedTimeArrayPosition > 1) {
                 throw new RecipeParseError(
-                    `Invalid range in time struture.`,
+                    `Invalid range in time struture.`, //TODO: Add why?
                     "The time format cannot have more than one range.",
                     line)
             }
@@ -269,9 +269,9 @@ function parseTime(
     for (let i = 0; i < 2; i++) {
         const [hours, minutes, seconds] = timeArray[i].map(Number);
 
-        if ( hours < 0 || hours > 100 ||
-            minutes < 0 || minutes > 60 ||
-            seconds < 0 || seconds > 60) {
+        if ( hours < 0 || hours > 99 ||
+            minutes < 0 || minutes > 59 ||
+            seconds < 0 || seconds > 59) {
             // Time doesn't make sense
             throw new RecipeParseError(
                 `Semantic time error: ${hours}:${minutes}:${seconds}` ,
