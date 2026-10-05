@@ -344,14 +344,23 @@ function parseDegree(
         )
     }
     const unit = text[position];
+    const afterUnit = text[position + 1];
 
     if (unit.toUpperCase() !== "C" &&
         unit.toUpperCase() !== "F" &&
-        unit.toUpperCase() !== "K") {
+        unit.toUpperCase() !== "K") { // Kelvin is a joke unit, remove if causes complications
 
         throw new RecipeParseError(
             `Invalid degree unit: ${unit}`,
-            "Degrees unit needs to be C (celsius), F (Fahrenheit) or K (Kelvin).",
+            "Degree unit needs to be C (celsius), F (Fahrenheit) or K (Kelvin).",
+            line
+        )
+    }
+
+    if (afterUnit !== "}") {
+        throw new RecipeParseError(
+            `Invalid degree element structure: ¤{${degreesString}%${unit}${afterUnit}`,
+            "Degree structure is invalid. The unit can only be 1 character long and must end with a closing bracket ( } ).",
             line
         )
     }
