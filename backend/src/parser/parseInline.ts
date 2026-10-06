@@ -1,14 +1,24 @@
-import type {RecipeElement} from "../model/RecipeElement";
-import type {TextElement} from "../model/TextElement.ts";
-import type {IngredientElement} from "../model/IngredientElement.ts";
-import type {EquipmentElement} from "../model/EquipmentElement.ts";
-import type {TimeElement} from "../model/TimeElement.ts";
-import {RecipeParseError} from "../model/Error";
+import type {
+    RecipeElements,
+    IngredientElement,
+    EquipmentElement,
+    TimeElement,
+    DegreeElement,
+    TextElement} from "../model/RecipeElements.ts";
+import {RecipeParseError} from "../model/Errors.ts";
 
-export function parseInline(text: string): RecipeElement[] {
+/* The parser uses certain symbols to determine what type of object is being made.
+ * They are the following:
+ * @ for ingredients
+ * # for equipment
+ * ~ for time
+ * ¤ for degrees
+ */
+
+export function parseInline(text: string): RecipeElements[] {
 
     let position = 0;
-    let elements: RecipeElement[] = [];
+    let elements: RecipeElements[] = [];
 
     const line = 0
 
@@ -28,6 +38,12 @@ export function parseInline(text: string): RecipeElement[] {
         }
         else if (text[position] === "~") {
             const {element, nextPosition} = parseTime(text, position, line);
+
+            elements.push(element);
+            position = nextPosition;
+        }
+        else if (text[position] === "¤") {
+            const {element, nextPosition} = parseDegree(text, position, line);
 
             elements.push(element);
             position = nextPosition;
@@ -64,7 +80,6 @@ function parseIngredient(
             position++;
             break;
         }
-
         name += character;
         position++;
     }
@@ -89,7 +104,6 @@ function parseIngredient(
             position++;
             break;
         }
-
         amountString += character;
         position++;
     }
@@ -111,7 +125,6 @@ function parseIngredient(
             position++;
             break;
         }
-
         unit += character;
         position++;
     }
@@ -150,6 +163,7 @@ function parseEquipment(
         if (character === "@") break;
         if (character === "#") break;
         if (character === "~") break;
+        if (character === "¤") break;
 
         lookahead++;
     }
@@ -173,7 +187,6 @@ function parseEquipment(
         if (character === " " && !isBracket) {
             break;
         }
-
         name += character;
         position++;
     }
@@ -207,7 +220,6 @@ function parseTime(
         if (character === "}") {
             position++;
             break;
-
         }
 
         else if (character === ":") {
@@ -216,7 +228,7 @@ function parseTime(
 
             if (timeArrayPosition > 2) {
                 throw new RecipeParseError(
-                    `Invalid time struture.` ,
+                    `Invalid time struture.` , //TODO: Add why?
                     "The time format cannot be longer than HH:MM:SS.",
                     line
                 )
@@ -229,7 +241,7 @@ function parseTime(
             timeArrayPosition = 0;
             if (rangedTimeArrayPosition > 1) {
                 throw new RecipeParseError(
-                    `Invalid range in time struture.`,
+                    `Invalid range in time struture.`, //TODO: Add why?
                     "The time format cannot have more than one range.",
                     line)
             }
@@ -257,13 +269,13 @@ function parseTime(
     for (let i = 0; i < 2; i++) {
         const [hours, minutes, seconds] = timeArray[i].map(Number);
 
-        if ( hours < 0 || hours > 100 ||
-            minutes < 0 || minutes > 60 ||
-            seconds < 0 || seconds > 60) {
+        if ( hours < 0 || hours > 99 ||
+            minutes < 0 || minutes > 59 ||
+            seconds < 0 || seconds > 59) {
             // Time doesn't make sense
             throw new RecipeParseError(
                 `Semantic time error: ${hours}:${minutes}:${seconds}` ,
-                "Time needs to be realistic. Minutes and seconds cannot be bigger than 59, hours cannot be bigger than 99 and numbers cannot be negative",
+                "Time needs to be realistic. Minutes and seconds cannot be bigger than 59, hours cannot be bigger than 99 and numbers cannot be negative.",
                 line
             )
         }
@@ -291,6 +303,80 @@ function parseTime(
     }
 }
 
+function parseDegree(
+    text: string,
+    start: number,
+    line: number
+): {
+    element: DegreeElement;
+    nextPosition: number;
+} {
+    let position = start + 2; // To skip the ¤{ symbols
+
+    let degreesString = "";
+
+    while (position < text.length) {
+        const character = text[position];
+
+        if (character === "%") {
+            position++;
+            break;
+        }
+
+        if (character === "}") {
+            throw new RecipeParseError(
+                `Invalid bracket structure: ${degreesString}`,
+                "Brackets needs to have degree numbers and a degree unit to be valid.",
+                line
+            )
+        }
+        degreesString += character;
+        position++;
+    }
+
+    const degrees = parseInt(degreesString, 10);
+
+    if (Number.isNaN(degrees)) {
+        throw new RecipeParseError(
+            `Invalid degrees number: ${degreesString}`,
+            "Degrees needs to be a number.",
+            line
+        )
+    }
+    const unit = text[position];
+    const afterUnit = text[position + 1];
+
+    if (unit.toUpperCase() !== "C" &&
+        unit.toUpperCase() !== "F" &&
+        unit.toUpperCase() !== "K") { // Kelvin is a joke unit, remove if causes complications
+
+        throw new RecipeParseError(
+            `Invalid degree unit: ${unit}`,
+            "Degree unit needs to be C (celsius), F (Fahrenheit) or K (Kelvin).",
+            line
+        )
+    }
+
+    if (afterUnit !== "}") {
+        throw new RecipeParseError(
+            `Invalid degree element structure: ¤{${degreesString}%${unit}${afterUnit}`,
+            "Degree structure is invalid. The unit can only be 1 character long and must end with a closing bracket ( } ).",
+            line
+        )
+    }
+
+    position = position + 2; // If everything is fine, move past unit and afterUnit
+
+    return {
+        element: {
+            type: "degree",
+            degrees: degrees,
+            unit: unit
+        },
+        nextPosition: position
+    };
+}
+
 function parseText(
     text: string,
     start: number,
@@ -308,11 +394,11 @@ function parseText(
         if (
             character === "@" ||
             character === "#" ||
-            character === "~"
+            character === "~" ||
+            character === "¤"
         ) {
             break;
         }
-
         buffer += character;
         position++;
     }
