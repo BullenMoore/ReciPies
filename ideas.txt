@@ -4,6 +4,4 @@ attributes for each object. It would also make cursor incrementation easier and 
 Alternatives to ingredients. As another user put it "flambé with @cognac or @whisky". A new syntax could be added to
 link two ingredients as swapable. Maybe something like @[1]cognac or @[1]whisky?
 
-Two endpoints for Directory Content, getDirectories and getRecipes
-
 Add warnings? Some things are not error (like setting a time element to 0). They won't break the program or hinder something to function, but they are still nonsense. Should stuff like this warn instead of error? How do we warn?
