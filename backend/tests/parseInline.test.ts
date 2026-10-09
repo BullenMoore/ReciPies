@@ -23,7 +23,24 @@ describe("parseInline - correct syntax testing", () => {
             {
                 type: "ingredient",
                 name: "smör",
-                amount: 200,
+                lowerAmount: 200,
+                upperAmount: 200,
+                unit: "g"
+            }
+        ]);
+    });
+
+    it("parses only ingredient with range", () => {
+        const result = parseInline(
+            "@smör{150-200%g}"
+        );
+
+        expect(result).toEqual([
+            {
+                type: "ingredient",
+                name: "smör",
+                lowerAmount: 150,
+                upperAmount: 200,
                 unit: "g"
             }
         ]);
@@ -42,6 +59,36 @@ describe("parseInline - correct syntax testing", () => {
         ]);
     });
 
+    it("parses only ingredient without an unit", () => {
+        const result = parseInline(
+            "@smör{150}"
+        );
+
+        expect(result).toEqual([
+            {
+                type: "ingredient",
+                name: "smör",
+                lowerAmount: 150,
+                upperAmount: 150
+            }
+        ]);
+    });
+
+    it("parses only ingredient with range and without an unit", () => {
+        const result = parseInline(
+            "@smör{150-200}"
+        );
+
+        expect(result).toEqual([
+            {
+                type: "ingredient",
+                name: "smör",
+                lowerAmount: 150,
+                upperAmount: 200
+            }
+        ]);
+    });
+
     it("parses text surrounding an ingredient", () => {
         const result = parseInline(
             "Blanda @smör{200%g} och blanda"
@@ -55,7 +102,8 @@ describe("parseInline - correct syntax testing", () => {
             {
                 type: "ingredient",
                 name: "smör",
-                amount: 200,
+                lowerAmount: 200,
+                upperAmount: 200,
                 unit: "g"
             },
             {
@@ -198,7 +246,8 @@ describe("parseInline - correct syntax testing", () => {
             {
                 type: "ingredient",
                 name: "florsocker",
-                amount: 2,
+                lowerAmount: 2,
+                upperAmount: 2,
                 unit: "dl"
             },
             {
@@ -208,7 +257,8 @@ describe("parseInline - correct syntax testing", () => {
             {
                 type: "ingredient",
                 name: "smör",
-                amount: 100,
+                lowerAmount: 100,
+                upperAmount: 100,
                 unit: "g"
             },
             {
@@ -244,7 +294,14 @@ describe("parseInline - incorrect syntax testing / error handling", () => {
 
     it("ingredient with incorrect number", () => {
 
-        expect(() => parseInline("@Smör{ab45c%dl}")).toThrow("Invalid amount: ab45c");
+        expect(() => parseInline("@Smör{ab45c%dl}")).toThrow("Invalid amount:");
+
+        expect(() => parseInline("@Smör{ab45c-abc67d%dl}")).toThrow("Invalid amount:");
+    });
+
+    it("ingredient with incorrect range", () => {
+
+        expect(() => parseInline("@Smör{150-200-250%dl}")).toThrow("Invalid range in ingredient structure.");
     });
 
     it("equipment with incorrect formatting", () => {
@@ -297,7 +354,4 @@ describe("parseInline - incorrect syntax testing / error handling", () => {
 
         expect(() => parseInline("¤{200%CF}")).toThrow("Invalid degree element structure:");
     });
-
-
-
 });
