@@ -49,7 +49,7 @@ export function parseInline(text: string): RecipeElements[] {
             position = nextPosition;
         }
         else {
-            const {element, nextPosition} = parseText(text, position, /*line*/);
+            const {element, nextPosition} = parseText(text, position, /*line*/); // Uncomment "line" if ever needed
 
             elements.push(element);
             position = nextPosition;
@@ -70,6 +70,9 @@ function parseIngredient(
 
     let name = "";
     let amountString = "";
+    let amountStrings = ["", ""]
+    let amountIndex = 0;
+    let hasRange = false;
     let unit = "";
 
     // Ingredient name
@@ -88,7 +91,8 @@ function parseIngredient(
     while (position < text.length) {
         const character = text[position];
 
-        if (character === "}") { // No amount
+        if (character === "}" &&
+            text[position - 1] === "{" ) { // No amount
 
             position++;
             return {
@@ -100,21 +104,61 @@ function parseIngredient(
             };
         }
 
-        if (character === "%") {
+        else if (character === "%") {
             position++;
             break;
         }
-        amountString += character;
-        position++;
+
+        else if (character === "-") {
+            position++;
+            amountIndex++;
+            hasRange = true;
+            if (amountIndex > 1) {
+                throw new RecipeParseError(
+                    `Invalid range in ingredient structure.`,
+                    `The ingredient format cannot have more than one range.`,
+                    line
+                )
+            }
+        }
+        else {
+            amountStrings[amountIndex] += character;
+            position++;
+        }
     }
 
-    const amount = parseInt(amountString, 10);
+    const lowerAmount = parseInt(amountStrings[0], 10);
+    let upperAmount = parseInt(amountStrings[1], 10);
 
-    if (Number.isNaN(amount)) {
+    if (Number.isNaN(lowerAmount)) {
         throw new RecipeParseError(
-            `Invalid amount: ${amountString}`,
-            `The amount needs to be a number.`,
+            `Invalid amount: ${amountStrings[0]} ${amountStrings[1]}`,
+            `The lower amount needs to be a number.`,
             line);
+    }
+
+    if (hasRange) {
+        if (Number.isNaN(upperAmount)) {
+            throw new RecipeParseError(
+                `Invalid amount: ${amountString}`,
+                `The upper amount needs to be a number.`,
+                line);
+        }
+    }
+    else {
+        upperAmount = lowerAmount;
+    }
+
+    if (text[position] === undefined) { //TODO: Should this work?
+        return {
+            element: {
+                type: "ingredient",
+                name: name,
+                lowerAmount: lowerAmount,
+                upperAmount: upperAmount
+            },
+            nextPosition : position
+        };
     }
 
     // Ingredient unit
@@ -133,7 +177,8 @@ function parseIngredient(
         element: {
             type: "ingredient",
             name: name,
-            amount: amount,
+            lowerAmount: lowerAmount,
+            upperAmount: upperAmount,
             unit: unit
         },
         nextPosition : position

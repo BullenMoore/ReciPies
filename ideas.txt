@@ -1,4 +1,5 @@
-Ranges to ingredients? Some recipes use stuff like 2-3 eggs because eggs have varying sizes.
+The parsing for ingredients, time, etc should be rewritten to use split, indexOf and splice to effectively divide the
+attributes for each object. It would also make cursor incrementation easier and lower the amount of lines.
 
 Alternatives to ingredients. As another user put it "flambé with @cognac or @whisky". A new syntax could be added to
 link two ingredients as swapable. Maybe something like @[1]cognac or @[1]whisky?

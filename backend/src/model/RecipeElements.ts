@@ -1,7 +1,8 @@
 export interface IngredientElement {
     type: "ingredient";
     name: string;
-    amount?: number;
+    lowerAmount?: number;
+    upperAmount?: number;
     unit?: string;
 }
 
