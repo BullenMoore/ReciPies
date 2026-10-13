@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { parseInline } from "../src/parser/parseInline";
+import { parseLine } from "../src/parser/parseLine";
 
-describe("parseInline - correct syntax testing", () => {
+describe("parseLine - correct syntax testing", () => {
 
     it("parses only text", () => {
-        const result = parseInline("Blanda");
+        const result = parseLine("Blanda");
 
         expect(result).toEqual([
             {
@@ -15,7 +15,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only ingredient", () => {
-        const result = parseInline(
+        const result = parseLine(
             "@smör{200%g}"
         );
 
@@ -31,7 +31,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only ingredient with range", () => {
-        const result = parseInline(
+        const result = parseLine(
             "@smör{150-200%g}"
         );
 
@@ -47,7 +47,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only ingredient without an amount", () => {
-        const result = parseInline(
+        const result = parseLine(
             "@smör{}"
         );
 
@@ -60,7 +60,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only ingredient without an unit", () => {
-        const result = parseInline(
+        const result = parseLine(
             "@smör{150}"
         );
 
@@ -75,7 +75,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only ingredient with range and without an unit", () => {
-        const result = parseInline(
+        const result = parseLine(
             "@smör{150-200}"
         );
 
@@ -90,7 +90,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses text surrounding an ingredient", () => {
-        const result = parseInline(
+        const result = parseLine(
             "Blanda @smör{200%g} och blanda"
         );
 
@@ -114,7 +114,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only equipment", () => {
-        const result = parseInline(
+        const result = parseLine(
             "#bunke{}"
         );
 
@@ -127,7 +127,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses equipment and text that ends with space", () => {
-        const result = parseInline(
+        const result = parseLine(
             "Ta fram en #bunke och blanda"
         );
 
@@ -148,7 +148,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only time", () => {
-        const result = parseInline(
+        const result = parseLine(
             "~{00:30:15}"
         );
 
@@ -162,7 +162,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses text surrounding time", () => {
-        const result = parseInline(
+        const result = parseLine(
             "Ställ i ugnen i ~{00:30} och vänta"
         );
 
@@ -184,7 +184,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses time with range", () => {
-        const result = parseInline(
+        const result = parseLine(
             "~{00:20-01:00:15}"
         );
 
@@ -198,7 +198,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses only degrees", () => {
-        const result = parseInline(
+        const result = parseLine(
             "¤{200%C}"
         );
 
@@ -212,7 +212,7 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses text surrounding degrees", () => {
-        const result = parseInline(
+        const result = parseLine(
             "Sätt ugnen på ¤{200%C} och vänta."
         );
 
@@ -234,8 +234,9 @@ describe("parseInline - correct syntax testing", () => {
     });
 
     it("parses text, ingredient, equipment and time together", () => {
-        const result = parseInline(
-            "Blanda @florsocker{2%dl} och @smör{100%g} i en #bunke{}. Häll i en #form{} och grädda i ugnen i ~{1}"
+        const result = parseLine(
+            "Blanda @florsocker{2%dl} och @smör{100%g} i en #bunke{}. Häll i en #form{} och grädda i ugnen i ~{1}",
+            1
         );
 
         expect(result).toEqual([
@@ -290,68 +291,68 @@ describe("parseInline - correct syntax testing", () => {
     });
 });
 
-describe("parseInline - incorrect syntax testing / error handling", () => {
+describe("parseLine - incorrect syntax testing / error handling", () => {
 
     it("ingredient with incorrect number", () => {
 
-        expect(() => parseInline("@Smör{ab45c%dl}")).toThrow("Invalid amount:");
+        expect(() => parseLine("@Smör{ab45c%dl}")).toThrow("Invalid amount:");
 
-        expect(() => parseInline("@Smör{ab45c-abc67d%dl}")).toThrow("Invalid amount:");
+        expect(() => parseLine("@Smör{ab45c-abc67d%dl}")).toThrow("Invalid amount:");
     });
 
     it("ingredient with incorrect range", () => {
 
-        expect(() => parseInline("@Smör{150-200-250%dl}")).toThrow("Invalid range in ingredient structure.");
+        expect(() => parseLine("@Smör{150-200-250%dl}")).toThrow("Invalid range in ingredient structure.");
     });
 
     it("equipment with incorrect formatting", () => {
 
-        expect(() => parseInline("#Stor bunke{3%l}")).toThrow("Invalid formatting for equipment.");
+        expect(() => parseLine("#Stor bunke{3%l}")).toThrow("Invalid formatting for equipment.");
     });
 
     it("time with incorrect structure", () => {
 
-        expect(() => parseInline("~{01:30:00:500}")).toThrow("Invalid time struture.");
+        expect(() => parseLine("~{01:30:00:500}")).toThrow("Invalid time struture.");
     });
 
     it("time with incorrect range", () => {
 
-        expect(() => parseInline("~{01:30-01:40-01:50}")).toThrow("Invalid range in time struture.");
+        expect(() => parseLine("~{01:30-01:40-01:50}")).toThrow("Invalid range in time struture.");
     });
 
     it("time with incorrect format", () => {
 
-        expect(() => parseInline("~{one:thirty}")).toThrow("Invalid time format:");
+        expect(() => parseLine("~{one:thirty}")).toThrow("Invalid time format:");
     });
 
     it("time with incorrect semantics (unrealistic time)", () => {
 
-        expect(() => parseInline("~{01:60}")).toThrow("Semantic time error:");
+        expect(() => parseLine("~{01:60}")).toThrow("Semantic time error:");
 
-        expect(() => parseInline("~{100:30}")).toThrow("Semantic time error:");
+        expect(() => parseLine("~{100:30}")).toThrow("Semantic time error:");
 
-        //expect(() => parseInline("~{00:00}")).toThrow("Semantic time error:"); Is a timer on 0 an error or bad input? Should it error?
+        //expect(() => parseLine("~{00:00}")).toThrow("Semantic time error:"); Is a timer on 0 an error or bad input? Should it error?
     });
 
     it("degrees with incorrect structure", () => {
 
-        expect(() => parseInline("¤{200}")).toThrow("Invalid bracket structure:");
+        expect(() => parseLine("¤{200}")).toThrow("Invalid bracket structure:");
     });
 
     it("degrees with incorrect number", () => {
 
-        expect(() => parseInline("¤{two hundred%C}")).toThrow("Invalid degrees number:");
+        expect(() => parseLine("¤{two hundred%C}")).toThrow("Invalid degrees number:");
     });
 
     it("degrees with incorrect unit", () => {
 
-        expect(() => parseInline("¤{200%D}")).toThrow("Invalid degree unit:");
+        expect(() => parseLine("¤{200%D}")).toThrow("Invalid degree unit:");
 
-        expect(() => parseInline("¤{200%}")).toThrow("Invalid degree unit:");
+        expect(() => parseLine("¤{200%}")).toThrow("Invalid degree unit:");
     });
 
     it("degrees with incorrect structure", () => {
 
-        expect(() => parseInline("¤{200%CF}")).toThrow("Invalid degree element structure:");
+        expect(() => parseLine("¤{200%CF}")).toThrow("Invalid degree element structure:");
     });
 });

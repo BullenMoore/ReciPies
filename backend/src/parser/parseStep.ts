@@ -1,25 +1,26 @@
-import type {RecipeStep} from "../model/RecipeStep.ts";
-import {parseInline} from "./parseInline.ts";
+import type { RecipeStep } from "../model/RecipeStep.ts";
+import { parseLine } from "./parseLine.ts";
 
-export function parseStep (text: string): RecipeStep[] {
+export function parseStep (step: string): RecipeStep[] {
 
     // The text provided is only the section that the steps exist within. Position 0 is thus the beginning of the section
 
     let steps: RecipeStep[] = [];
     let position = 0;
+    const line = 0
 
-    while (position < text.length) {
-        const newlinePosition = text.indexOf("\n", position);
+    while (position < step.length) {
+        const newlinePosition = step.indexOf("\n", position);
 
         // If there is no more newline, this is the final line
         const endPosition =
             newlinePosition === -1
-                ? text.length
+                ? step.length
                 : newlinePosition;
 
-        const line = text.slice(position, endPosition);
+        const text = step.slice(position, endPosition);
 
-        const content = parseInline(line);
+        const content = parseLine(text, line);
 
         if (content.length > 0) {
             const step: RecipeStep = {

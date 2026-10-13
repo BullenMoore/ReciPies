@@ -17,8 +17,8 @@ export interface TimeElement {
     maxSeconds: number;
 }
 
-export interface DegreeElement {
-    type: "degree";
+export interface DegreesElement {
+    type: "degrees";
     degrees: number;
     unit: string;
 }
@@ -33,7 +33,7 @@ export type RecipeElements =
     | IngredientElement
     | EquipmentElement
     | TimeElement
-    | DegreeElement
+    | DegreesElement
     | TextElement
 
 
