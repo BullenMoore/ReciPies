@@ -55,7 +55,7 @@ export function parseIngredient(
     const unit = parseUnit(text.slice(unitStart, unitEnd));
 
     if (percentIndex !== -1 &&
-        unit === undefined) {
+        unit === undefined) { //TODO: Unnecessary error?
         throw new RecipeParseError(
             `Invalid unit name.`,
             `A present unit cannot be empty`,
@@ -104,8 +104,8 @@ function parseAmount(amount: string, line: number):
 
     if (amounts.length > 2) {
         throw new RecipeParseError(
-            `Invalid ingredient range. ${amounts}`,
-            `An ingredient can have at most one range.`,
+            `Invalid amount of ranges: ${amounts}`,
+            `An ingredient can have at most two numbers in its range.`,
             line
         );
     }

@@ -8,7 +8,7 @@ import {parseSection} from "./parseSection.ts";
  * The method can be called to only include the metadata of the recipe to avoid unnecessary parsing of
  * the recipe steps when browsing, searching or filtering recipes.
  *
- * @param text - Path to the `.cook` file to be parsed.
+ * @param text - The entire `.cook` file as a string.
  * @param metadataOnly - Set to `True` if the parser should only return the metadata of the recipe.
  * Useful for when only generic information about the recipe is needed.
  * Should be `False` when the entire recipe is needed (when the steps of the recipe is needed).
@@ -18,6 +18,8 @@ import {parseSection} from "./parseSection.ts";
 export function parseRecipe(text: string, metadataOnly: boolean) : Recipe {
 
     const recipe = new Recipe();
+
+    let lineNumber = 1;
 
     const startMetadata = text.indexOf("---", 0);
     const endMetadata = text.indexOf("---", startMetadata + 3);
@@ -31,6 +33,8 @@ export function parseRecipe(text: string, metadataOnly: boolean) : Recipe {
     const lines = metadataText.split("\n");
 
     for (const line of lines) {
+        lineNumber++;
+
         const separator = line.indexOf(":");
 
         if (separator === -1) {
@@ -74,7 +78,8 @@ export function parseRecipe(text: string, metadataOnly: boolean) : Recipe {
     // Section(s)
     if (!metadataOnly) {
         const recipeText = text.slice(endMetadata + 3);
-        recipe.sections = parseSection(recipeText); //TODO: We need to know what line number the sections start at, so error handling can be proper
+        recipe.sections = parseSection(recipeText, lineNumber);
     }
+
     return recipe
 }

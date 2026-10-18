@@ -30,6 +30,15 @@ export function parseEquipment(
     const nameEnd = openBracket;
 
     const name = parseName(text.slice(nameStart, nameEnd), line);
+    const insideBrackets = text.slice(openBracket + 1, closeBracket );
+
+    if (insideBrackets !== "") {
+        throw new RecipeParseError(
+            `Invalid bracket structure: ${text}`,
+            `Equipment cannot feature anything inside its brackets.`,
+            line
+        )
+    }
 
     return {
         type: "equipment",

@@ -48,7 +48,7 @@ export function parseTime(
 
     if (minSeconds > maxSeconds) {
         throw new RecipeParseError(
-            `Invalid ingredient amounts: ${minSeconds}-${maxSeconds}`,
+            `Invalid time amounts: ${minSeconds}-${maxSeconds}`,
             `The lower amount cannot exceed the upper amount.`,
             line
         );
@@ -67,7 +67,7 @@ function parseTimeSection(time: string, line: number):
     const timeArray = [0, 0, 0];
     const somethings = time.split(":");
 
-    if (somethings.length > 2) {
+    if (somethings.length > 3) {
         throw new RecipeParseError(
             `Invalid time struture.`, //TODO: Add why?
             "The time format cannot be longer than HH:MM:SS.",

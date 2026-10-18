@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import {RecipeService} from "../src/service/RecipeService";
+import { RecipeService } from "../src/service/RecipeService";
 
 describe("RecipeService - correct path usage", () => {
     const recipeService = new RecipeService();
 
     it("getDirectoryContent", async () => {
 
-        const result = await recipeService.getDirectoryContent("recipes/Fika");
+        const result = await recipeService.getDirectoryContent("recipes/Folder2");
 
         expect(result).toContainEqual(
             expect.objectContaining({
@@ -23,7 +23,7 @@ describe("RecipeService - correct path usage", () => {
 
     it("getFileContent", async () => {
 
-        const result = await recipeService.getRecipe("recipes/Fika/Banana bread.cook");
+        const result = await recipeService.getRecipe("recipes/Folder2/Banana bread.cook");
 
         expect(result).toMatchObject({
             type: "recipe",

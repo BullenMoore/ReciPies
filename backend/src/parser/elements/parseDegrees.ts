@@ -82,7 +82,7 @@ function parseUnit(unit: string, line: number):
 
     if (unit === "") {
         throw new RecipeParseError(
-            `Missing unit name.`,
+            `Missing degrees unit.`,
             `An unit cannot be empty.`,
             line
         );

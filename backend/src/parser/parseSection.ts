@@ -1,7 +1,7 @@
-import type {RecipeSection} from "../model/RecipeSection.ts";
-import {parseStep} from "./parseStep.ts";
+import type { RecipeSection } from "../model/RecipeSection.ts";
+import { parseStep } from "./parseStep.ts";
 
-export function parseSection (text: string): RecipeSection[] {
+export function parseSection (text: string, line: number): RecipeSection[] {
 
     // The text provided is the entire recipe except the metadata, including the =Section part
 
@@ -27,7 +27,6 @@ export function parseSection (text: string): RecipeSection[] {
             sectionTitle = text.slice(titleStart + 1, titleEnd).trim();
         }
 
-
         // Finding the steps in the section
         const sectionStart =
             titleEnd === -1
@@ -44,9 +43,12 @@ export function parseSection (text: string): RecipeSection[] {
 
         const sectionText = text.slice(sectionStart, sectionEnd);
 
+        const {steps, newLine} = parseStep(sectionText, line);
+        line = newLine;
+
         const section: RecipeSection = {
             title : sectionTitle === "" ? undefined : sectionTitle,
-            steps : parseStep(sectionText)
+            steps : steps
         };
 
         sections.push(section);

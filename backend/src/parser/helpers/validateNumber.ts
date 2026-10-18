@@ -9,8 +9,8 @@ export function validateNumber(
 
     if (value === "") {
         throw new RecipeParseError(
-            `Invalid number for number "${value}"`, //TODO: Update error text
-            `wewe`,
+            `Empty number.`, //TODO: Update error text
+            `A number cannot be empty.`,
             line
         )
     }

@@ -1,5 +1,5 @@
-import {describe, expect, it} from "vitest";
-import {parseSection} from "../src/parser/parseSection";
+import { describe, expect, it } from "vitest";
+import { parseSection } from "../src/parser/parseSection";
 
 describe("parseSection - correct data construction testing", () => {
 

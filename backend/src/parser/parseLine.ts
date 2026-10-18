@@ -1,5 +1,4 @@
 import type { RecipeElements, TextElement } from "../model/RecipeElements.ts";
-import { RecipeParseError } from "../model/Errors.ts";
 import { parseIngredient } from "./elements/parseIngredient.ts";
 import { parseEquipment } from "./elements/parseEquipment.ts";
 import { parseTime } from "./elements/parseTime.ts";
@@ -22,7 +21,7 @@ export function parseLine(text: string, line: number): RecipeElements[] {
 
         if (text[position] === "@") {
 
-            const end = findElementEnd(text, position, line);
+            const end = findElementEnd(text, position);
             const element = parseIngredient(text.slice(position, end), line);
 
             elements.push(element);
@@ -30,7 +29,7 @@ export function parseLine(text: string, line: number): RecipeElements[] {
         }
         else if (text[position] === "#") {
 
-            const end = findElementEnd(text, position, line);
+            const end = findElementEnd(text, position);
             const element  = parseEquipment(text.slice(position, end), line);
 
             elements.push(element);
@@ -38,7 +37,7 @@ export function parseLine(text: string, line: number): RecipeElements[] {
         }
         else if (text[position] === "~") {
 
-            const end = findElementEnd(text, position, line);
+            const end = findElementEnd(text, position);
             const element = parseTime(text.slice(position, end), line);
 
             elements.push(element);
@@ -46,14 +45,14 @@ export function parseLine(text: string, line: number): RecipeElements[] {
         }
         else if (text[position] === "¤") {
 
-            const end = findElementEnd(text, position, line);
+            const end = findElementEnd(text, position);
             const element = parseDegrees(text.slice(position, end), line);
 
             elements.push(element);
             position = end;
         }
         else {
-            const {element, nextPosition} = parseText(text, position /*, line*/); // Uncomment "line" if ever needed
+            const {element, nextPosition} = parseText(text, position); // Uncomment "line" if ever needed
 
             elements.push(element);
             position = nextPosition;
@@ -62,6 +61,7 @@ export function parseLine(text: string, line: number): RecipeElements[] {
     return elements;
 }
 
+//TODO: Should parseText be a part of parseLine as it is unique, or rather, the lack of element?
 function parseText(
     text: string,
     start: number
@@ -96,16 +96,12 @@ function parseText(
     };
 }
 
-function findElementEnd (text:string, position: number, line: number): number {
+function findElementEnd (text:string, position: number): number {
 
     const end = text.indexOf("}", position);
 
     if (end === -1) {
-        throw new RecipeParseError(
-            `Missing closing brace: ${text}`,
-            `The ingredient is missing "}".`,
-            line
-        );
+        return text.length
     }
 
     return end + 1;

@@ -15,10 +15,15 @@ describe("parseEquipment - correct syntax testing", () => {
             }
         );
     });
+});
 
+describe("parseEquipment - incorrect syntax testing / error handling", () => {
 
+    it("ingredient with incorrect numbering", () => {
 
-
-
-
+        expect(() => parseEquipment(
+            "#Bunke{ab45c}",
+            1
+        )).toThrow("Invalid bracket structure: #Bunke{ab45c}");
+    });
 });
