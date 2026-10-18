@@ -11,7 +11,3 @@ export interface RecipeFile {
     path: string;
     recipe: Recipe;
 }
-
-export type DirectoryEntry =
-    | RecipeDirectory
-    | RecipeFile;
