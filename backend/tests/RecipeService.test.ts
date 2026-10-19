@@ -4,30 +4,59 @@ import { RecipeService } from "../src/service/RecipeService";
 describe("RecipeService - correct path usage", () => {
     const recipeService = new RecipeService();
 
-    it("getDirectoryContent", async () => {
+    it("Get content in a directory", async () => {
 
-        const result = await recipeService.getDirectoryContent("recipes/Folder2");
+        // The API calls for directories and recipes (only metadata) separately
+        const directories = await recipeService.getDirectories("Folder2");
+        const recipes = await recipeService.getRecipes("Folder2");
 
-        expect(result).toContainEqual(
-            expect.objectContaining({
-                type: "recipe"
-            })
-        );
-
-        expect(result).toContainEqual(
+        expect(directories).toContainEqual(
             expect.objectContaining({
                 type: "directory"
             })
         );
+
+        expect(recipes).toContainEqual(
+            expect.objectContaining({
+                type: "recipe"
+            })
+        );
     })
 
-    it("getFileContent", async () => {
+    it("Get recipe content", async () => {
 
-        const result = await recipeService.getRecipe("recipes/Folder2/Banana bread.cook");
+        const recipe = await recipeService.getRecipe("Folder2/Banana bread.cook");
 
-        expect(result).toMatchObject({
+        expect(recipe).toMatchObject({
             type: "recipe",
         });
+    })
+
+    it("Get directory content from root", async () => {
+
+        // "" is the root folder, "./" also works
+        const directories = await recipeService.getDirectories("");
+        const recipes = await recipeService.getRecipes("");
+
+        expect(directories).toEqual([
+            {
+                name: "Folder1",
+                path: "/home/tim/GitHub/ReciPies/backend/recipes/Folder1",
+                type: "directory",
+            },
+            {
+                name: "Folder2",
+                path: "/home/tim/GitHub/ReciPies/backend/recipes/Folder2",
+                type: "directory",
+            },
+            {
+                name: "Folder3",
+                path: "/home/tim/GitHub/ReciPies/backend/recipes/Folder3",
+                type: "directory",
+            },
+        ]);
+        // There is no recipes in the root folder
+        expect(recipes).toEqual([]);
     })
 })
 
@@ -37,9 +66,9 @@ describe("RecipeService - incorrect path usage / error handling", () => {
     it("throw error when trying to access file outside of root directory", async () => {
 
         await expect(
-            recipeService.getRecipe("recipes/../.env")
+            recipeService.getRecipe("../.env")
         ).rejects.toThrow(
-            "Cannot access files outside the recipes directory."
+            /Cannot access files outside the recipes directory:/
         );
     });
 })
