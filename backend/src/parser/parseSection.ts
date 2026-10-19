@@ -56,7 +56,7 @@ export function parseSection (text: string, line: number): RecipeSection[] {
         // Update the postition to be after the previous sectionEnd
         position = sectionEnd;
         sectionTitle = "";
-
     }
+
     return sections;
 }
