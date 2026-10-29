@@ -27,35 +27,57 @@ export function parseIngredient(
         );
     }
 
-    const nameStart = 1;
+    let nameStart = 1;
     const nameEnd = openBracket;
     const percentIndex = text.indexOf("%");
+    let swapStart = text.indexOf("[");
 
+    let swapEnd;
     let amountStart;
     let amountEnd;
     let unitStart;
     let unitEnd;
 
-    // Check if there is not a unit present, set indexes accordingly
-    if (percentIndex === -1) {
-        amountStart = openBracket + 1;
-        amountEnd = closeBracket;
-        unitStart = 0;
-        unitEnd = 0; // Doesn't matter what the number is, they just need to be the same
-    }
-    else {
+    // Check if there is a unit present, set indexes accordingly
+    if (percentIndex !== -1) {
         amountStart = openBracket + 1;
         amountEnd = percentIndex;
         unitStart = percentIndex + 1;
         unitEnd = closeBracket;
     }
+    else {
+        amountStart = openBracket + 1;
+        amountEnd = closeBracket;
+        unitStart = 0;
+        unitEnd = 0; // Doesn't matter what the number is, they just need to be the same
+    }
 
+    // Check if the ingredient has a swappable trait, set indexes accordingly
+     if (swapStart !== -1) {
+         swapEnd = text.indexOf("]")
+         if (swapEnd === -1) {
+             throw new RecipeParseError(
+                 `Invalid swap structure.`,
+                 `The structure for a swappable ingredient needs a closing "]"`,
+                 line
+             );
+         }
+         swapStart++;
+         nameStart = swapEnd + 1;
+     }
+     else {
+         swapStart = 0;
+         swapEnd = 0; // Doesn't matter what the number is, they just need to be the same
+     }
+
+
+    const swapNumber = parseSwapNumber(text.slice(swapStart, swapEnd), line);
     const name = parseName(text.slice(nameStart, nameEnd), line);
     const { lowerAmount, upperAmount } = parseAmount(text.slice(amountStart, amountEnd), line);
     const unit = parseUnit(text.slice(unitStart, unitEnd));
 
     if (percentIndex !== -1 &&
-        unit === undefined) { //TODO: Unnecessary error?
+        unit === undefined) {
         throw new RecipeParseError(
             `Invalid unit name.`,
             `A present unit cannot be empty`,
@@ -65,11 +87,30 @@ export function parseIngredient(
 
     return {
         type: "ingredient",
+        swapNumber,
         name,
         lowerAmount,
         upperAmount,
         unit
     };
+}
+
+function parseSwapNumber(swapNumber: string, line: number):
+    number | undefined {
+
+    if (swapNumber === "") return undefined;
+
+    swapNumber = swapNumber.trim();
+
+    if (swapNumber === "") {
+        throw new RecipeParseError(
+            `Missing swap number.`,
+            `A swap number cannot be empty, if present.`,
+            line
+        );
+    }
+
+    return validateNumber(swapNumber, line);
 }
 
 function parseName(name: string, line: number):

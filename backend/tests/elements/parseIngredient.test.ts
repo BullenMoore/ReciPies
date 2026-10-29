@@ -17,6 +17,21 @@ describe("parseIngredient - correct syntax testing", () => {
         );
     });
 
+    it("ingredient with swap number, without amount and unit", () => {
+        const result = parseIngredient(
+            "@[1]Smör{}",
+            1
+        )
+
+        expect(result).toEqual(
+            {
+                type: "ingredient",
+                name: "Smör",
+                swapNumber: 1
+            }
+        );
+    })
+
     it("ingredient with only amount (without range)", () => {
         const result = parseIngredient(
             "@Smör{150}",
