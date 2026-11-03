@@ -1,4 +1,3 @@
 
 Add warnings? Some things are not error (like setting a time element to 0). They won't break the program or hinder something to function, but they are still nonsense. Should stuff like this warn instead of error? How do we warn?
 
-alternative names for recipes? add to metadata an array of strings with alternative names. These should be searchable. The main name is still the displaying name

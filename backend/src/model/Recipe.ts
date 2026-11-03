@@ -3,6 +3,7 @@ import type {RecipeSection} from "./RecipeSection";
 export class Recipe {
     // Metadata
     title?: string;
+    alternatives?: string[];
     description?: string;
     category?: string;
     difficulty?: string;
@@ -17,6 +18,7 @@ export class Recipe {
     sections?: RecipeSection[];
 
     constructor() {
+        this.alternatives = [];
         this.time = {};
         this.source = {};
         this.tags = [];

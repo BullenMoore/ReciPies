@@ -7,6 +7,7 @@ describe("parseRecipe", () => {
         const result = parseRecipe(
             "---\n" +
             "title: Kärleksmums\n" +
+            "alternatives: Snoddas, Kramforskaka, Mumsingar\n" +
             "description: Kärleksmums, Snoddas, Kramforskaka, Mumsingar. Ja, kärt barn har många namn. Ett gott och enkelt recept för saftig kaka och generöst med glasyr. \n" +
             "source.url: https://fridasbakblogg.se/2018/04/03/karleksmums-recept-med-extra-glasyr/\n" +
             "servings: 20\n" +
@@ -14,7 +15,7 @@ describe("parseRecipe", () => {
             "time.cook: 20 minuter\n" +
             "#cuisine: If applicable\n" +
             "#diet: If applicable\n" +
-            "tags: []\n" +
+            "tags: Swedish, Kokos\n" +
             "---\n" +
             "\n" +
             "= Botten\n" +
@@ -36,12 +37,13 @@ describe("parseRecipe", () => {
                 "source": {
                     "url": "https://fridasbakblogg.se/2018/04/03/karleksmums-recept-med-extra-glasyr/",
                 },
-                "tags": [],
+                "tags": ["Swedish", "Kokos"],
                 "time": {
                     "cook": "20 minuter",
                     "prep": "15 minuter",
                 },
                 "title": "Kärleksmums",
+                "alternatives": ["Snoddas", "Kramforskaka", "Mumsingar"]
         });
     });
 
