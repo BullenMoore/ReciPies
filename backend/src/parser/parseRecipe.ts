@@ -44,6 +44,9 @@ export function parseRecipe(text: string, metadataOnly: boolean) : Recipe {
         const key = line.slice(0, separator).trim();
         const value = line.slice(separator + 1).trim();
 
+        //TODO: Note that keys should only have one recognizer, but some have several so that recipes are compatible
+        //TODO: Create a total test suite for recipe metadata and total parsing
+
         // Singular keys
         if (key === "title") recipe.title = value;
         if (key === "description" || key === "introduction") recipe.description = value;
@@ -69,9 +72,18 @@ export function parseRecipe(text: string, metadataOnly: boolean) : Recipe {
             key === "duration"
         ) recipe.time.required = value; //TODO: Cook syntax says that required time should be prep + cook time. Calculation instead?
 
-        // Tags
+        // Arrays
         if (key === "tags") {
-            // Tags are special
+            recipe.tags = value
+                .split(",")
+                .map(name => name.trim())
+                .filter(name => name.length > 0);
+        }
+        if (key === "alternatives") {
+            recipe.alternatives = value
+                .split(",")
+                .map(name => name.trim())
+                .filter(name => name.length > 0);
         }
     }
 
