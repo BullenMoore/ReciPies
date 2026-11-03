@@ -1,5 +1,6 @@
 export interface IngredientElement {
     type: "ingredient";
+    swapNumber?: number;
     name: string;
     lowerAmount?: number;
     upperAmount?: number;

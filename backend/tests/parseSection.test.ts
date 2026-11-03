@@ -11,7 +11,8 @@ describe("parseSection - correct data construction testing", () => {
             "\n" +
             "= Glasyr\n" +
             "\n" +
-            "Smält"
+            "Smält",
+            1
         );
 
         expect(result).toEqual([
@@ -49,7 +50,8 @@ describe("parseSection - correct data construction testing", () => {
             "\n" +
             "Börja med att sätta ugnen på 175°C\n" +
             "\n" +
-            "Smält"
+            "Smält",
+            1
         );
 
         expect(result).toEqual([
@@ -84,7 +86,8 @@ describe("parseSection - correct data construction testing", () => {
             "\n" +
             "= Glasyr\n" +
             "\n" +
-            "Smält"
+            "Smält",
+            1
         );
 
         expect(result).toEqual([
