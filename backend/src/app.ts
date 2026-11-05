@@ -1,9 +1,10 @@
 import express, { type Express, type Request, type Response } from 'express';
-import {RecipeService} from "./service/RecipeService.ts";
+import { RecipeService } from "./service/RecipeService.ts";
 
 const recipeService = new RecipeService();
 const app: Express = express();
 
+//TODO: Add try and catch?
 app.get('/api/directories', async (req: Request, res: Response) => {
 
   const folder = req.query.path as string;
